@@ -1,8 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/public'
 import type { Category } from '@/types'
 
 export async function getCategories(): Promise<Category[]> {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
 
   const { data, error } = await supabase
     .from('categories')

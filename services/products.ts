@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/public'
 import type { Product } from '@/types'
 
 export async function getProducts(options?: { categorySlug?: string; availableOnly?: boolean }): Promise<Product[]> {
@@ -66,7 +67,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 }
 
 export async function getAllProductSlugs(): Promise<string[]> {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
 
   const { data, error } = await supabase.from('products').select('slug')
 
