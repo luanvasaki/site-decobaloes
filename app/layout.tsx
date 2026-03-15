@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    url: process.env.NEXT_PUBLIC_SITE_URL,
+    url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://decobaloes.com.br',
     siteName: 'Decobalões',
     title: 'Decobalões — Decorações para Festas',
     description:
