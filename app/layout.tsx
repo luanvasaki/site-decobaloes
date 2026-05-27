@@ -7,6 +7,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? 'https://decobaloes.com.br'
   ),
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+    shortcut: '/logo.png',
+  },
+  manifest: '/manifest.webmanifest',
   title: {
     default: 'Decobalões — Decorações para Festas',
     template: '%s | Decobalões',
