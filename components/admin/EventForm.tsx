@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -24,7 +24,7 @@ const itemSchema = z.object({
 
 const schema = z.object({
   client_name:       z.string().min(2, 'Informe o nome do cliente'),
-  client_phone:      z.string().min(8, 'Informe o telefone'),
+  client_phone:      z.string().min(14, 'Informe um telefone válido'),
   client_email:      z.string().email('E-mail inválido').optional().or(z.literal('')),
   event_date:        z.string().min(1, 'Informe a data do evento'),
   event_time:        z.string().optional(),
@@ -75,7 +75,7 @@ export function EventForm({ categories, products, event }: EventFormProps) {
   const [error, setError] = useState<string | null>(null)
 
   const {
-    register, handleSubmit, watch, control,
+    register, handleSubmit, watch, control, setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -117,6 +117,14 @@ export function EventForm({ categories, products, event }: EventFormProps) {
   })
 
   const { fields, append, remove } = useFieldArray({ control, name: 'items' })
+
+  const formatPhone = useCallback((value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11)
+    if (digits.length <= 2) return digits.length ? `(${digits}` : ''
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
+    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
+  }, [])
 
   const watchItems = watch('items')
   const itemsTotal = watchItems.reduce(
@@ -236,7 +244,15 @@ export function EventForm({ categories, products, event }: EventFormProps) {
             <label className={label}>
               <Phone className="w-3.5 h-3.5 inline mr-1" />WhatsApp *
             </label>
-            <input {...register('client_phone')} className={input} placeholder="(11) 99999-9999" />
+            <input
+              {...register('client_phone')}
+              className={input}
+              placeholder="(11) 99999-9999"
+              inputMode="numeric"
+              onChange={(e) => {
+                setValue('client_phone', formatPhone(e.target.value), { shouldValidate: true })
+              }}
+            />
             {errors.client_phone && <p className={errCls}>{errors.client_phone.message}</p>}
           </div>
           <div className="sm:col-span-2">
