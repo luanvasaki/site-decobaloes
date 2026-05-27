@@ -93,7 +93,7 @@ export async function getRevenueByCategory(): Promise<{ name: string; revenue: n
 
   const map: Record<string, { revenue: number; count: number }> = {}
   for (const row of data ?? []) {
-    const name = (row.categories as { name: string } | null)?.name ?? 'Sem categoria'
+    const name = (row.categories as unknown as { name: string } | null)?.name ?? 'Sem categoria'
     if (!map[name]) map[name] = { revenue: 0, count: 0 }
     map[name].revenue += Number(row.total_value)
     map[name].count += 1

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import type { Metadata } from 'next'
 import { CatalogView } from '@/components/catalog/CatalogView'
 import { getProducts } from '@/services/products'

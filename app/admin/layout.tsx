@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 import { AdminMobileNav } from '@/components/admin/AdminMobileNav'
 

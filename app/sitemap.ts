@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import type { MetadataRoute } from 'next'
 import { getAllProductSlugs } from '@/services/products'
 import { getCategories } from '@/services/categories'
