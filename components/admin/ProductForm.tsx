@@ -39,7 +39,7 @@ const schema = z.object({
   // decoração-specific
   color_palette: z.string().optional(),
   event_size: z.preprocess(
-    (v) => (v === '' ? undefined : v),
+    (v) => (v === '' || v === null || v === undefined ? undefined : v),
     z.enum(['pequeno', 'medio', 'grande']).optional()
   ),
   includes_setup: z.boolean().optional(),
@@ -263,9 +263,10 @@ export function ProductForm({ categories, product }: ProductFormProps) {
             <>
               <p className="font-semibold mb-2">Corrija os campos abaixo antes de salvar:</p>
               <ul className="space-y-1">
-                {(Object.entries(errors) as [string, { message?: string }][]).map(([field, e]) => (
-                  <li key={field}>• <strong>{field}:</strong> {e?.message ?? 'valor inválido'}</li>
-                ))}
+                {errors.name && <li>• <strong>Nome:</strong> {errors.name.message}</li>}
+                {errors.price_rental && <li>• <strong>Preço:</strong> {String(errors.price_rental.message)}</li>}
+                {errors.quantity_total && <li>• <strong>Qtd. total em estoque:</strong> {errors.quantity_total.message}</li>}
+                {errors.quantity_available && <li>• <strong>Qtd. disponível:</strong> {errors.quantity_available.message}</li>}
               </ul>
             </>
           )}
