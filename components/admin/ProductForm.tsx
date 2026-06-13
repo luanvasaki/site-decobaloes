@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -42,7 +42,9 @@ interface ProductFormProps {
 export function ProductForm({ categories, product }: ProductFormProps) {
   const router = useRouter()
   const isEditing = !!product
+  const formRef = useRef<HTMLFormElement>(null)
   const [loading, setLoading] = useState(false)
+  const [hasValidationError, setHasValidationError] = useState(false)
   const [imageFiles, setImageFiles] = useState<File[]>([])
   const [existingImages, setExistingImages] = useState<string[]>(
     product?.images_urls ?? []
@@ -98,6 +100,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   async function onSubmit(data: FormData) {
     setLoading(true)
     setError(null)
+    setHasValidationError(false)
     const supabase = createClient()
     const slug = isEditing ? product.slug : slugify(data.name)
 
@@ -179,8 +182,15 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   const label = 'block text-sm font-semibold text-slate mb-1.5'
   const err = 'text-xs text-red-500 mt-1'
 
+  function handleInvalid() {
+    setHasValidationError(true)
+    const firstError = formRef.current?.querySelector('[aria-invalid="true"], .text-red-500')
+      ?? formRef.current
+    firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-8 max-w-2xl">
+    <form ref={formRef} onSubmit={handleSubmit(onSubmit, handleInvalid)} noValidate className="space-y-8 max-w-2xl">
       {error && (
         <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">
           {error}
@@ -457,6 +467,11 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       </div>
 
       {/* ── Botões ── */}
+      {hasValidationError && (
+        <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">
+          Preencha todos os campos obrigatórios marcados em vermelho antes de continuar.
+        </div>
+      )}
       <div className="flex gap-3 pt-2">
         <button
           type="submit"
