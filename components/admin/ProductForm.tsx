@@ -18,12 +18,24 @@ function toNumber(v: unknown): unknown {
   return isNaN(n) ? undefined : n
 }
 
+// Normaliza número inteiro vindo do input (string ou number) para number | undefined
+function toInt(v: unknown): unknown {
+  if (v === '' || v === undefined || v === null) return undefined
+  if (typeof v === 'number') return Number.isFinite(v) ? Math.round(v) : undefined
+  const n = parseInt(String(v), 10)
+  return isNaN(n) ? undefined : n
+}
+
 const schema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
   description: z.string().optional(),
   product_type: z.enum(['decoracao', 'material']),
   category_id: z.string().optional(),
-  price_rental: z.preprocess(toNumber, z.number({ invalid_type_error: 'Digite um valor válido' }).min(0.01, 'Preço deve ser maior que zero')),
+  price_rental: z.preprocess(
+    toNumber,
+    z.number({ required_error: 'Preço é obrigatório', invalid_type_error: 'Digite um valor válido' })
+      .min(0.01, 'Preço deve ser maior que zero'),
+  ),
   // decoração-specific
   color_palette: z.string().optional(),
   event_size: z.preprocess(
@@ -35,8 +47,8 @@ const schema = z.object({
   height: z.preprocess(toNumber, z.number().optional()),
   width: z.preprocess(toNumber, z.number().optional()),
   depth: z.preprocess(toNumber, z.number().optional()),
-  quantity_total: z.coerce.number().int().min(1).optional(),
-  quantity_available: z.coerce.number().int().min(0).optional(),
+  quantity_total: z.preprocess(toInt, z.number().int().min(1, 'Mínimo 1').optional()),
+  quantity_available: z.preprocess(toInt, z.number().int().min(0, 'Mínimo 0').optional()),
   is_available: z.boolean(),
 })
 
@@ -108,6 +120,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   }
 
   async function onSubmit(data: FormData) {
+    console.log('[ProductForm] onSubmit CHAMADO', data)
     setLoading(true)
     setError(null)
     setHasValidationError(false)
@@ -198,7 +211,8 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     if (main) main.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  function handleInvalid() {
+  function handleInvalid(errors: Record<string, unknown>) {
+    console.log('[ProductForm] handleInvalid CHAMADO — erros de validação:', errors)
     setHasValidationError(true)
     setTimeout(scrollMainToTop, 0)
   }
@@ -484,6 +498,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         <button
           type="submit"
           disabled={loading}
+          onClick={() => console.log('[ProductForm] botão submit clicado')}
           className="touch-manipulation px-8 py-3 rounded-xl bg-[#1E293B] text-white font-bold text-sm hover:bg-slate-700 transition-colors focus:outline-none focus:ring-4 focus:ring-slate/30 disabled:opacity-60 flex items-center gap-2"
         >
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}
