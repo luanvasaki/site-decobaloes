@@ -98,15 +98,15 @@ export function ServicesSection() {
               className="min-w-[260px] md:min-w-[280px] flex-shrink-0 snap-start"
             >
               <Link href={service.href} className="group block">
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-4 shadow-card">
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-card bg-[#fdf2f8]">
                   <Image
                     src={service.image}
                     alt={service.title}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="object-contain group-hover:scale-105 transition-transform duration-500"
                     sizes="280px"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/50 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/30 to-transparent" />
                   <div className="absolute top-4 left-4 w-9 h-9 rounded-xl bg-[#F9A8D4] flex items-center justify-center shadow-sm">
                     <span className="text-xs font-extrabold text-[#1E293B]">{service.number}</span>
                   </div>
