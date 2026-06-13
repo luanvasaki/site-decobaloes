@@ -15,7 +15,7 @@ const schema = z.object({
   description: z.string().optional(),
   product_type: z.enum(['decoracao', 'material']),
   category_id: z.string().optional(),
-  price_rental: z.coerce.number().positive('Preço deve ser maior que zero'),
+  price_rental: z.coerce.number().min(0.01, 'Preço deve ser maior que zero'),
   // decoração-specific
   color_palette: z.string().optional(),
   event_size: z.preprocess(
@@ -63,7 +63,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       description: product?.description ?? '',
       product_type: product?.product_type ?? 'decoracao',
       category_id: product?.category_id ?? '',
-      price_rental: product?.price_rental ?? 0,
+      price_rental: product?.price_rental ?? (undefined as unknown as number),
       color_palette: product?.color_palette ?? '',
       event_size: product?.event_size ?? undefined,
       includes_setup: product?.includes_setup ?? false,
@@ -195,9 +195,9 @@ export function ProductForm({ categories, product }: ProductFormProps) {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit(onSubmit, handleInvalid)} noValidate className="space-y-8 max-w-2xl">
-      {error && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">
-          {error}
+      {(error || hasValidationError) && (
+        <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600 font-medium">
+          {error ?? 'Campos obrigatórios pendentes — veja os erros em vermelho abaixo.'}
         </div>
       )}
 
@@ -472,11 +472,6 @@ export function ProductForm({ categories, product }: ProductFormProps) {
 
       {/* ── Botões ── */}
       <div className="flex flex-col gap-3 pt-2">
-        {(hasValidationError || error) && (
-          <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600 font-medium">
-            {error ?? 'Campos obrigatórios pendentes — veja os erros em vermelho acima.'}
-          </div>
-        )}
         <div className="flex gap-3">
         <button
           type="submit"
