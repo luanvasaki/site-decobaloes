@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useTransition } from 'react'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
 import type { GalleryPhoto } from '@/services/gallery'
-import { Upload, Trash2, Loader2, ImageIcon } from 'lucide-react'
+import { setHeroImageAction } from '@/app/actions/settings'
+import { Upload, Trash2, Loader2, ImageIcon, Star, Check } from 'lucide-react'
 
 export default function AdminGaleriaPage() {
   const [activeTab, setActiveTab] = useState('casamentos')
@@ -13,7 +14,24 @@ export default function AdminGaleriaPage() {
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [currentHeroUrl, setCurrentHeroUrl] = useState<string | null>(null)
+  const [settingHero, setSettingHero] = useState<string | null>(null)
+  const [heroSuccess, setHeroSuccess] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isPending, startTransition] = useTransition()
+
+  // Load current hero from settings
+  useEffect(() => {
+    const supabase = createClient()
+    supabase
+      .from('settings')
+      .select('value')
+      .eq('key', 'hero_image_url')
+      .single()
+      .then(({ data }) => {
+        if (data?.value) setCurrentHeroUrl(data.value)
+      })
+  }, [])
 
   async function fetchPhotos() {
     setLoading(true)
@@ -67,6 +85,21 @@ export default function AdminGaleriaPage() {
     fetchPhotos()
   }
 
+  async function handleSetHero(photo: GalleryPhoto) {
+    setSettingHero(photo.id)
+    startTransition(async () => {
+      const result = await setHeroImageAction(photo.image_url)
+      if (result.ok) {
+        setCurrentHeroUrl(photo.image_url)
+        setHeroSuccess(photo.id)
+        setTimeout(() => setHeroSuccess(null), 2500)
+      }
+      setSettingHero(null)
+    })
+  }
+
+  const isCurrentHero = (url: string) => url === currentHeroUrl
+
   return (
     <div className="p-4 md:p-8">
       <div className="mb-6">
@@ -74,6 +107,38 @@ export default function AdminGaleriaPage() {
         <p className="text-slate/50 text-sm mt-1">
           As fotos aparecem na galeria da página inicial <strong>e no catálogo</strong> por categoria. Adicione ou remova fotos à vontade.
         </p>
+      </div>
+
+      {/* ── Foto de Capa do Site ─────────────────────────────────── */}
+      <div className="bg-white rounded-2xl shadow-card p-4 md:p-6 mb-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Star className="w-5 h-5 text-[#F9A8D4]" />
+          <h2 className="text-base font-bold text-[#1E293B]">Foto de Capa do Site</h2>
+        </div>
+
+        {currentHeroUrl ? (
+          <div className="flex flex-col sm:flex-row gap-4 items-start">
+            <div className="relative w-40 h-28 rounded-xl overflow-hidden flex-shrink-0 border-2 border-[#F9A8D4]">
+              <Image
+                src={currentHeroUrl}
+                alt="Foto de capa atual"
+                fill
+                className="object-cover object-[center_30%]"
+                sizes="160px"
+              />
+            </div>
+            <div className="flex flex-col justify-center gap-1">
+              <p className="text-sm font-semibold text-[#1E293B]">Foto atual selecionada como capa</p>
+              <p className="text-xs text-slate/50 break-all">{currentHeroUrl}</p>
+              <p className="text-xs text-slate/40 mt-1">
+                Para trocar, clique em qualquer foto da galeria abaixo e selecione{' '}
+                <strong className="text-[#1E293B]">"Usar como capa do site"</strong>.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-slate/40">Nenhuma foto de capa definida ainda.</p>
+        )}
       </div>
 
       {/* Tabs */}
@@ -134,30 +199,65 @@ export default function AdminGaleriaPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {photos.map((photo) => (
-              <div key={photo.id} className="relative group aspect-square rounded-xl overflow-hidden">
-                <Image
-                  src={photo.image_url}
-                  alt="Foto da galeria"
-                  fill
-                  className="object-cover"
-                  sizes="200px"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button
-                    onClick={() => handleDelete(photo)}
-                    disabled={deletingId === photo.id}
-                    aria-label="Remover foto"
-                    className="w-10 h-10 rounded-xl bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
-                  >
-                    {deletingId === photo.id
-                      ? <Loader2 className="w-4 h-4 animate-spin" />
-                      : <Trash2 className="w-4 h-4" />
-                    }
-                  </button>
+            {photos.map((photo) => {
+              const isCover = isCurrentHero(photo.image_url)
+              const isSettingThis = settingHero === photo.id
+              const justSet = heroSuccess === photo.id
+
+              return (
+                <div key={photo.id} className={`relative group aspect-square rounded-xl overflow-hidden ${isCover ? 'ring-2 ring-[#F9A8D4]' : ''}`}>
+                  <Image
+                    src={photo.image_url}
+                    alt="Foto da galeria"
+                    fill
+                    className="object-cover"
+                    sizes="200px"
+                  />
+
+                  {/* Badge: foto atual de capa */}
+                  {isCover && (
+                    <div className="absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#F9A8D4] text-[#1E293B] text-xs font-bold shadow">
+                      <Star className="w-3 h-3" />
+                      Capa
+                    </div>
+                  )}
+
+                  {/* Overlay on hover */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2">
+                    {/* Botão usar como capa */}
+                    {!isCover && (
+                      <button
+                        onClick={() => handleSetHero(photo)}
+                        disabled={isSettingThis || isPending}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F9A8D4] text-[#1E293B] text-xs font-bold hover:bg-pink-300 transition-colors disabled:opacity-60"
+                      >
+                        {isSettingThis
+                          ? <Loader2 className="w-3 h-3 animate-spin" />
+                          : justSet
+                          ? <Check className="w-3 h-3" />
+                          : <Star className="w-3 h-3" />
+                        }
+                        {justSet ? 'Definida!' : 'Usar como capa'}
+                      </button>
+                    )}
+
+                    {/* Botão deletar */}
+                    <button
+                      onClick={() => handleDelete(photo)}
+                      disabled={deletingId === photo.id}
+                      aria-label="Remover foto"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-bold hover:bg-red-600 transition-colors disabled:opacity-60"
+                    >
+                      {deletingId === photo.id
+                        ? <Loader2 className="w-3 h-3 animate-spin" />
+                        : <Trash2 className="w-3 h-3" />
+                      }
+                      Remover
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
