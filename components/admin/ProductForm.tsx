@@ -481,7 +481,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="px-8 py-3 rounded-xl bg-[#1E293B] text-white font-bold text-sm hover:bg-slate-700 transition-colors focus:outline-none focus:ring-4 focus:ring-slate/30 disabled:opacity-60 flex items-center gap-2"
+          className="touch-manipulation px-8 py-3 rounded-xl bg-[#1E293B] text-white font-bold text-sm hover:bg-slate-700 transition-colors focus:outline-none focus:ring-4 focus:ring-slate/30 disabled:opacity-60 flex items-center gap-2"
         >
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}
           {loading ? 'Salvando...' : isEditing ? 'Salvar alterações' : 'Criar item'}
