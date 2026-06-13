@@ -167,7 +167,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     } catch (err) {
       console.error('[ProductForm] onSubmit:', err)
       setError('Erro ao salvar. Tente novamente.')
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      scrollMainToTop()
     } finally {
       setLoading(false)
     }
@@ -183,12 +183,14 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   const label = 'block text-sm font-semibold text-slate mb-1.5'
   const err = 'text-xs text-red-500 mt-1'
 
+  function scrollMainToTop() {
+    const main = document.querySelector('main')
+    if (main) main.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   function handleInvalid() {
     setHasValidationError(true)
-    // Wait one tick so React re-renders error elements before scrolling
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }, 0)
+    setTimeout(scrollMainToTop, 0)
   }
 
   return (
@@ -469,15 +471,13 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       </div>
 
       {/* ── Botões ── */}
-      {(hasValidationError || error) && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600 font-medium">
-          {error ?? 'Campos obrigatórios pendentes — veja os erros marcados em vermelho acima.'}
-        </div>
-      )}
-      <div
-        className="sticky -mx-4 px-4 py-4 bg-white/95 backdrop-blur-sm border-t border-slate/8 md:static md:mx-0 md:px-0 md:py-0 md:bg-transparent md:border-none flex gap-3 z-10"
-        style={{ bottom: 'calc(3.5rem + env(safe-area-inset-bottom, 0px))' }}
-      >
+      <div className="flex flex-col gap-3 pt-2">
+        {(hasValidationError || error) && (
+          <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600 font-medium">
+            {error ?? 'Campos obrigatórios pendentes — veja os erros em vermelho acima.'}
+          </div>
+        )}
+        <div className="flex gap-3">
         <button
           type="submit"
           disabled={loading}
@@ -493,6 +493,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         >
           Cancelar
         </button>
+        </div>
       </div>
     </form>
   )
