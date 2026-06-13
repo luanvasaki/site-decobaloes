@@ -9,12 +9,12 @@ export async function HeroSection() {
   const heroImageUrl = await getHeroImageUrl()
 
   return (
-    <section className="relative h-[70vh] md:h-[85vh] min-h-[560px] flex items-end overflow-hidden">
+    <section className="relative h-[50vh] md:h-[60vh] max-h-[580px] min-h-[380px] flex items-end overflow-hidden">
       <Image
         src={heroImageUrl}
         alt="Decoração Decobalões"
         fill
-        className="object-cover object-[center_30%]"
+        className="object-cover object-center"
         priority
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/85 via-[#1E293B]/30 to-transparent" />
