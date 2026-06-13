@@ -263,10 +263,9 @@ export function ProductForm({ categories, product }: ProductFormProps) {
             <>
               <p className="font-semibold mb-2">Corrija os campos abaixo antes de salvar:</p>
               <ul className="space-y-1">
-                {errors.name && <li>• <strong>Nome:</strong> {errors.name.message}</li>}
-                {errors.price_rental && <li>• <strong>Preço:</strong> {String(errors.price_rental.message)}</li>}
-                {errors.quantity_total && <li>• <strong>Qtd. total:</strong> {errors.quantity_total.message}</li>}
-                {errors.quantity_available && <li>• <strong>Qtd. disponível:</strong> {errors.quantity_available.message}</li>}
+                {(Object.entries(errors) as [string, { message?: string }][]).map(([field, e]) => (
+                  <li key={field}>• <strong>{field}:</strong> {e?.message ?? 'valor inválido'}</li>
+                ))}
               </ul>
             </>
           )}
