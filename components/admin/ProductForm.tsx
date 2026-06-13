@@ -75,6 +75,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -190,7 +191,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     } catch (err) {
       console.error('[ProductForm] onSubmit:', err)
       setError('Erro ao salvar. Tente novamente.')
-      scrollMainToTop()
+      scrollToFirstError()
     } finally {
       setLoading(false)
     }
@@ -201,20 +202,38 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     setImageFiles((prev) => [...prev, ...files])
   }
 
-  const input =
-    'w-full px-4 py-2.5 rounded-xl border border-slate/15 text-sm focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40 focus:border-[#F9A8D4] transition-all bg-white'
   const label = 'block text-sm font-semibold text-slate mb-1.5'
   const err = 'text-xs text-red-500 mt-1'
 
-  function scrollMainToTop() {
-    const main = document.querySelector('main')
-    if (main) main.scrollTo({ top: 0, behavior: 'smooth' })
+  function fieldCls(hasError: boolean) {
+    return `w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-4 transition-all bg-white ${
+      hasError
+        ? 'border-red-400 focus:ring-red-300/40 focus:border-red-400'
+        : 'border-slate/15 focus:ring-[#F9A8D4]/40 focus:border-[#F9A8D4]'
+    }`
   }
 
-  function handleInvalid(errors: Record<string, unknown>) {
-    console.log('[ProductForm] handleInvalid CHAMADO — erros de validação:', errors)
+  // Mantém compatibilidade para campos sem validação explícita
+  const input = fieldCls(false)
+
+  const priceRegister = register('price_rental')
+
+  function scrollToFirstError() {
+    const main = document.querySelector('main')
+    const firstErrField = formRef.current?.querySelector('.border-red-400')
+    if (main && firstErrField) {
+      const offset = firstErrField.getBoundingClientRect().top
+        - main.getBoundingClientRect().top
+        + main.scrollTop - 100
+      main.scrollTo({ top: offset, behavior: 'smooth' })
+    } else if (main) {
+      main.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
+  function handleInvalid() {
     setHasValidationError(true)
-    setTimeout(scrollMainToTop, 0)
+    setTimeout(scrollToFirstError, 50)
   }
 
   return (
@@ -259,7 +278,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
           <input
             id="name"
             {...register('name')}
-            className={input}
+            className={fieldCls(!!errors.name)}
             placeholder={isDecoracao ? 'Ex: Decoração Casamento Clássico Rosa e Dourado' : 'Ex: Mesa redonda 1,50m'}
           />
           {errors.name && <p className={err}>{errors.name.message}</p>}
@@ -307,8 +326,18 @@ export function ProductForm({ categories, product }: ProductFormProps) {
               id="price_rental"
               type="text"
               inputMode="decimal"
-              {...register('price_rental')}
-              className={input}
+              {...priceRegister}
+              onBlur={(e) => {
+                const raw = e.target.value.replace(',', '.')
+                const num = parseFloat(raw)
+                if (!isNaN(num) && num > 0) {
+                  const formatted = num.toFixed(2).replace('.', ',')
+                  e.target.value = formatted
+                  setValue('price_rental', formatted as unknown as number)
+                }
+                priceRegister.onBlur(e)
+              }}
+              className={fieldCls(!!errors.price_rental)}
               placeholder="Ex: 150,00"
             />
             {errors.price_rental && <p className={err}>{errors.price_rental.message}</p>}
@@ -414,11 +443,13 @@ export function ProductForm({ categories, product }: ProductFormProps) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="quantity_total" className={label}>Qtd. total em estoque</label>
-              <input id="quantity_total" type="number" min="1" {...register('quantity_total')} className={input} />
+              <input id="quantity_total" type="number" min="1" {...register('quantity_total')} className={fieldCls(!!errors.quantity_total)} />
+              {errors.quantity_total && <p className={err}>{errors.quantity_total.message}</p>}
             </div>
             <div>
               <label htmlFor="quantity_available" className={label}>Qtd. disponível agora</label>
-              <input id="quantity_available" type="number" min="0" {...register('quantity_available')} className={input} />
+              <input id="quantity_available" type="number" min="0" {...register('quantity_available')} className={fieldCls(!!errors.quantity_available)} />
+              {errors.quantity_available && <p className={err}>{errors.quantity_available.message}</p>}
             </div>
           </div>
         </div>
