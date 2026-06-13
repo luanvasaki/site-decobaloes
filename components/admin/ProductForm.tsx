@@ -10,12 +10,20 @@ import { slugify } from '@/lib/utils'
 import { Loader2, Upload, X, Sparkles, Wrench } from 'lucide-react'
 import type { Category, Product } from '@/types'
 
+// Normaliza vírgula → ponto antes de parsear (padrão BR: 20,50 → 20.50)
+function toNumber(v: unknown): unknown {
+  if (v === '' || v === undefined || v === null) return undefined
+  if (typeof v === 'number') return v
+  const n = parseFloat(String(v).replace(',', '.'))
+  return isNaN(n) ? undefined : n
+}
+
 const schema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
   description: z.string().optional(),
   product_type: z.enum(['decoracao', 'material']),
   category_id: z.string().optional(),
-  price_rental: z.coerce.number().min(0.01, 'Preço deve ser maior que zero'),
+  price_rental: z.preprocess(toNumber, z.number({ invalid_type_error: 'Digite um valor válido' }).min(0.01, 'Preço deve ser maior que zero')),
   // decoração-specific
   color_palette: z.string().optional(),
   event_size: z.preprocess(
@@ -24,9 +32,9 @@ const schema = z.object({
   ),
   includes_setup: z.boolean().optional(),
   // material-specific
-  height: z.coerce.number().optional(),
-  width: z.coerce.number().optional(),
-  depth: z.coerce.number().optional(),
+  height: z.preprocess(toNumber, z.number().optional()),
+  width: z.preprocess(toNumber, z.number().optional()),
+  depth: z.preprocess(toNumber, z.number().optional()),
   quantity_total: z.coerce.number().int().min(1).optional(),
   quantity_available: z.coerce.number().int().min(0).optional(),
   is_available: z.boolean(),
@@ -63,7 +71,9 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       description: product?.description ?? '',
       product_type: product?.product_type ?? 'decoracao',
       category_id: product?.category_id ?? '',
-      price_rental: product?.price_rental ?? (undefined as unknown as number),
+      price_rental: product?.price_rental != null
+        ? (String(product.price_rental).replace('.', ',') as unknown as number)
+        : ('' as unknown as number),
       color_palette: product?.color_palette ?? '',
       event_size: product?.event_size ?? undefined,
       includes_setup: product?.includes_setup ?? false,
@@ -281,12 +291,11 @@ export function ProductForm({ categories, product }: ProductFormProps) {
             <label htmlFor="price_rental" className={label}>Preço de aluguel (R$) *</label>
             <input
               id="price_rental"
-              type="number"
-              step="0.01"
-              min="0"
+              type="text"
+              inputMode="decimal"
               {...register('price_rental')}
               className={input}
-              placeholder="0,00"
+              placeholder="Ex: 150,00"
             />
             {errors.price_rental && <p className={err}>{errors.price_rental.message}</p>}
           </div>
@@ -377,12 +386,11 @@ export function ProductForm({ categories, product }: ProductFormProps) {
               {(['height', 'width', 'depth'] as const).map((dim) => (
                 <div key={dim}>
                   <input
-                    type="number"
-                    step="0.1"
-                    min="0"
+                    type="text"
+                    inputMode="decimal"
                     {...register(dim)}
                     className={input}
-                    placeholder={dim === 'height' ? 'Altura' : dim === 'width' ? 'Largura' : 'Profundidade'}
+                    placeholder={dim === 'height' ? 'Altura' : dim === 'width' ? 'Largura' : 'Profund.'}
                   />
                 </div>
               ))}
