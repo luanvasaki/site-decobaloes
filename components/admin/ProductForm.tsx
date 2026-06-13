@@ -190,8 +190,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       router.refresh()
     } catch (err) {
       console.error('[ProductForm] onSubmit:', err)
-      const e = err as { message?: string; code?: string; details?: string }
-      setError(`Erro: ${e?.message ?? JSON.stringify(err)}`)
+      setError('Erro ao salvar. Tente novamente.')
       scrollToFirstError()
     } finally {
       setLoading(false)
