@@ -167,6 +167,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     } catch (err) {
       console.error('[ProductForm] onSubmit:', err)
       setError('Erro ao salvar. Tente novamente.')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } finally {
       setLoading(false)
     }
@@ -184,9 +185,10 @@ export function ProductForm({ categories, product }: ProductFormProps) {
 
   function handleInvalid() {
     setHasValidationError(true)
-    const firstError = formRef.current?.querySelector('[aria-invalid="true"], .text-red-500')
-      ?? formRef.current
-    firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    // Wait one tick so React re-renders error elements before scrolling
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 0)
   }
 
   return (
@@ -467,9 +469,9 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       </div>
 
       {/* ── Botões ── */}
-      {hasValidationError && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">
-          Preencha todos os campos obrigatórios marcados em vermelho antes de continuar.
+      {(hasValidationError || error) && (
+        <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600 font-medium">
+          {error ?? 'Campos obrigatórios pendentes — veja os erros marcados em vermelho acima.'}
         </div>
       )}
       <div className="flex gap-3 pt-2">
