@@ -31,7 +31,7 @@ export default function AdminLayout({
           </Link>
         </header>
 
-        <main className="flex-1 overflow-auto pb-16 md:pb-0">{children}</main>
+        <main className="flex-1 overflow-auto pb-28 md:pb-0">{children}</main>
       </div>
 
       <AdminMobileNav />

@@ -474,7 +474,10 @@ export function ProductForm({ categories, product }: ProductFormProps) {
           {error ?? 'Campos obrigatórios pendentes — veja os erros marcados em vermelho acima.'}
         </div>
       )}
-      <div className="flex gap-3 pt-2">
+      <div
+        className="sticky -mx-4 px-4 py-4 bg-white/95 backdrop-blur-sm border-t border-slate/8 md:static md:mx-0 md:px-0 md:py-0 md:bg-transparent md:border-none flex gap-3 z-10"
+        style={{ bottom: 'calc(3.5rem + env(safe-area-inset-bottom, 0px))' }}
+      >
         <button
           type="submit"
           disabled={loading}
