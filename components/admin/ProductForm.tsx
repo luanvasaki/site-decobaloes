@@ -216,6 +216,23 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   // Mantém compatibilidade para campos sem validação explícita
   const input = fieldCls(false)
 
+  // Aplica auto-formato decimal (20 → 20,00) ao sair do campo
+  function makeDecimalProps(reg: ReturnType<typeof register>) {
+    return {
+      ...reg,
+      type: 'text' as const,
+      inputMode: 'decimal' as const,
+      onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
+        const raw = e.target.value.replace(',', '.')
+        const num = parseFloat(raw)
+        if (!isNaN(num)) {
+          e.target.value = num.toFixed(2).replace('.', ',')
+        }
+        reg.onBlur(e)
+      },
+    }
+  }
+
   const priceRegister = register('price_rental')
 
   function scrollToFirstError() {
@@ -239,8 +256,20 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   return (
     <form ref={formRef} onSubmit={handleSubmit(onSubmit, handleInvalid)} noValidate className="space-y-8 max-w-2xl">
       {(error || hasValidationError) && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600 font-medium">
-          {error ?? 'Campos obrigatórios pendentes — veja os erros em vermelho abaixo.'}
+        <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">
+          {error ? (
+            <p className="font-semibold">{error}</p>
+          ) : (
+            <>
+              <p className="font-semibold mb-2">Corrija os campos abaixo antes de salvar:</p>
+              <ul className="space-y-1">
+                {errors.name && <li>• <strong>Nome:</strong> {errors.name.message}</li>}
+                {errors.price_rental && <li>• <strong>Preço:</strong> {String(errors.price_rental.message)}</li>}
+                {errors.quantity_total && <li>• <strong>Qtd. total:</strong> {errors.quantity_total.message}</li>}
+                {errors.quantity_available && <li>• <strong>Qtd. disponível:</strong> {errors.quantity_available.message}</li>}
+              </ul>
+            </>
+          )}
         </div>
       )}
 
@@ -429,9 +458,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
               {(['height', 'width', 'depth'] as const).map((dim) => (
                 <div key={dim}>
                   <input
-                    type="text"
-                    inputMode="decimal"
-                    {...register(dim)}
+                    {...makeDecimalProps(register(dim))}
                     className={input}
                     placeholder={dim === 'height' ? 'Altura' : dim === 'width' ? 'Largura' : 'Profund.'}
                   />
