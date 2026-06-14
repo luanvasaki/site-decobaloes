@@ -1,87 +1,116 @@
 'use client'
 
+import { useRef, useState, useEffect } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { WhatsAppButton } from '@/components/shared/WhatsAppButton'
 
-const portfolioItems = [
-  { src: '/festa-9.jpg',  label: 'Casamento Clássico',   span: 'col-span-2 row-span-2' },
-  { src: '/festa-2.jpg',  label: 'Debutante Rosa',        span: 'col-span-1 row-span-1' },
-  { src: '/festa-12.jpg', label: 'Casamento Rústico',     span: 'col-span-1 row-span-1' },
-  { src: '/festa-1.jpg',  label: 'Festa Colorida',        span: 'col-span-1 row-span-1' },
-  { src: '/festa-4.jpg',  label: 'Aniversário Temático',  span: 'col-span-1 row-span-1' },
+const DEFAULT_IMAGES = [
+  '/festa-9.jpg',
+  '/festa-2.jpg',
+  '/festa-12.jpg',
+  '/festa-1.jpg',
+  '/festa-4.jpg',
 ]
 
-export function PortfolioSection() {
+interface PortfolioSectionProps {
+  images?: string[]
+}
+
+export function PortfolioSection({ images }: PortfolioSectionProps) {
+  const srcs = images && images.length > 0 ? images : DEFAULT_IMAGES
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const onScroll = () => {
+      const index = Math.round(el.scrollLeft / (el.scrollWidth / srcs.length))
+      setActiveIndex(index)
+    }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
+  }, [srcs.length])
+
+  function scrollTo(i: number) {
+    const el = scrollRef.current
+    if (!el) return
+    const itemWidth = el.scrollWidth / srcs.length
+    el.scrollTo({ left: itemWidth * i, behavior: 'smooth' })
+    setActiveIndex(i)
+  }
+
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-[#faf8f5]">
       <div className="container mx-auto px-4 max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
 
-          {/* Left — Text */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-2 lg:sticky lg:top-28"
-          >
-            <p className="text-sm font-bold text-[#D4AF37] uppercase tracking-widest mb-3">
-              Portfólio
-            </p>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-[#1E293B] leading-tight mb-5">
-              Festas que já<br />
-              <span className="text-[#EC4899]">criamos</span> com<br />
-              carinho
-            </h2>
-            <p className="text-slate/60 leading-relaxed mb-8">
-              Cada festa tem uma história. Veja alguns dos momentos especiais que
-              ajudamos a tornar inesquecíveis ao longo dos anos.
-            </p>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-10"
+        >
+          <p className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest mb-3">
+            Portfólio
+          </p>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-[#1E293B]">
+            Nossas{' '}
+            <span className="font-playfair italic text-[#EC4899]">decorações</span>
+          </h2>
+          <p className="text-[#1E293B]/50 mt-3 text-sm">
+            Eventos reais realizados pela Decobalões com muito carinho.
+          </p>
+        </motion.div>
 
-            <Link
-              href="/catalogo"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl border-2 border-[#1E293B] text-[#1E293B] font-bold text-sm hover:bg-[#1E293B] hover:text-white transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-slate/20"
+        {/* Horizontal scroll gallery */}
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0"
+        >
+          {srcs.map((src, i) => (
+            <motion.div
+              key={src + i}
+              initial={{ opacity: 0, scale: 0.96 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45, delay: i * 0.06 }}
+              className="flex-shrink-0 snap-start w-[80vw] sm:w-[46%] md:w-[31%] aspect-[4/3] rounded-2xl overflow-hidden relative"
             >
-              Ver mais projetos
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </motion.div>
-
-          {/* Right — Bento grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="lg:col-span-3 grid grid-cols-3 gap-3 auto-rows-[160px] md:auto-rows-[180px]"
-          >
-            {portfolioItems.map((item, i) => (
-              <motion.div
-                key={item.src}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: i * 0.08 }}
-                className={`relative rounded-2xl overflow-hidden group ${item.span}`}
-              >
-                <Image
-                  src={item.src}
-                  alt={item.label}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  sizes="(max-width: 768px) 50vw, 33vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/60 to-transparent" />
-                <span className="absolute bottom-3 left-3 text-white text-xs font-bold px-2.5 py-1 rounded-lg bg-black/30 backdrop-blur-sm">
-                  {item.label}
-                </span>
-              </motion.div>
-            ))}
-          </motion.div>
-
+              <Image
+                src={src}
+                alt="Decoração Decobalões"
+                fill
+                className="object-cover hover:scale-105 transition-transform duration-500"
+                sizes="(max-width: 640px) 80vw, (max-width: 1024px) 46vw, 31vw"
+              />
+            </motion.div>
+          ))}
         </div>
+
+        {/* Dots */}
+        <div className="flex justify-center gap-2 mt-5">
+          {srcs.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollTo(i)}
+              aria-label={`Foto ${i + 1}`}
+              className={`rounded-full transition-all duration-300 ${
+                i === activeIndex
+                  ? 'w-6 h-2 bg-[#D4AF37]'
+                  : 'w-2 h-2 bg-[#D4AF37]/30 hover:bg-[#D4AF37]/60'
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* WhatsApp CTA */}
+        <div className="flex justify-center mt-10">
+          <WhatsAppButton size="md" />
+        </div>
+
       </div>
     </section>
   )

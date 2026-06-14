@@ -2,6 +2,14 @@ import { createClient } from '@/lib/supabase/server'
 
 const HERO_IMAGE_FALLBACK = '/festa-9.jpg'
 
+const HOMEPAGE_IMAGES_FALLBACK = [
+  '/festa-9.jpg',
+  '/festa-2.jpg',
+  '/festa-12.jpg',
+  '/festa-1.jpg',
+  '/festa-4.jpg',
+]
+
 export async function getHeroImageUrl(): Promise<string> {
   try {
     const supabase = await createClient()
@@ -23,4 +31,21 @@ export async function setHeroImageUrl(url: string): Promise<void> {
   await supabase
     .from('settings')
     .upsert({ key: 'hero_image_url', value: url, updated_at: new Date().toISOString() })
+}
+
+export async function getHomepageImages(): Promise<string[]> {
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('settings')
+      .select('value')
+      .eq('key', 'homepage_images')
+      .single()
+
+    if (error || !data?.value) return HOMEPAGE_IMAGES_FALLBACK
+    const parsed = JSON.parse(data.value)
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : HOMEPAGE_IMAGES_FALLBACK
+  } catch {
+    return HOMEPAGE_IMAGES_FALLBACK
+  }
 }

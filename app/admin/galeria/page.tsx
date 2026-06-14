@@ -5,8 +5,8 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
 import type { GalleryPhoto } from '@/services/gallery'
-import { setHeroImageAction } from '@/app/actions/settings'
-import { Upload, Trash2, Loader2, ImageIcon, Star, Check } from 'lucide-react'
+import { setHeroImageAction, setHomepageImagesAction } from '@/app/actions/settings'
+import { Upload, Trash2, Loader2, ImageIcon, Star, Check, Home, X } from 'lucide-react'
 
 export default function AdminGaleriaPage() {
   const [activeTab, setActiveTab] = useState('casamentos')
@@ -15,21 +15,26 @@ export default function AdminGaleriaPage() {
   const [uploading, setUploading] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [currentHeroUrl, setCurrentHeroUrl] = useState<string | null>(null)
+  const [homepageImages, setHomepageImages] = useState<string[]>([])
   const [settingHero, setSettingHero] = useState<string | null>(null)
   const [heroSuccess, setHeroSuccess] = useState<string | null>(null)
+  const [homepageSuccess, setHomepageSuccess] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isPending, startTransition] = useTransition()
 
-  // Load current hero from settings
   useEffect(() => {
     const supabase = createClient()
     supabase
       .from('settings')
-      .select('value')
-      .eq('key', 'hero_image_url')
-      .single()
+      .select('key, value')
+      .in('key', ['hero_image_url', 'homepage_images'])
       .then(({ data }) => {
-        if (data?.value) setCurrentHeroUrl(data.value)
+        data?.forEach((row) => {
+          if (row.key === 'hero_image_url') setCurrentHeroUrl(row.value)
+          if (row.key === 'homepage_images') {
+            try { setHomepageImages(JSON.parse(row.value) ?? []) } catch { /* empty */ }
+          }
+        })
       })
   }, [])
 
@@ -81,6 +86,12 @@ export default function AdminGaleriaPage() {
     setDeletingId(photo.id)
     const supabase = createClient()
     await supabase.from('gallery_photos').delete().eq('id', photo.id)
+    // Remove from homepage images if present
+    const newList = homepageImages.filter((u) => u !== photo.image_url)
+    if (newList.length !== homepageImages.length) {
+      setHomepageImages(newList)
+      startTransition(async () => { await setHomepageImagesAction(newList) })
+    }
     setDeletingId(null)
     fetchPhotos()
   }
@@ -98,6 +109,23 @@ export default function AdminGaleriaPage() {
     })
   }
 
+  function handleToggleHomepage(photo: GalleryPhoto) {
+    const isIn = homepageImages.includes(photo.image_url)
+    const newList = isIn
+      ? homepageImages.filter((u) => u !== photo.image_url)
+      : [...homepageImages, photo.image_url]
+    setHomepageImages(newList)
+    setHomepageSuccess(photo.id)
+    setTimeout(() => setHomepageSuccess(null), 2000)
+    startTransition(async () => { await setHomepageImagesAction(newList) })
+  }
+
+  function handleRemoveFromHomepage(url: string) {
+    const newList = homepageImages.filter((u) => u !== url)
+    setHomepageImages(newList)
+    startTransition(async () => { await setHomepageImagesAction(newList) })
+  }
+
   const isCurrentHero = (url: string) => url === currentHeroUrl
 
   return (
@@ -105,39 +133,67 @@ export default function AdminGaleriaPage() {
       <div className="mb-6">
         <h1 className="text-xl md:text-2xl font-extrabold text-[#1E293B]">Galeria de Fotos</h1>
         <p className="text-slate/50 text-sm mt-1">
-          As fotos aparecem na galeria da página inicial <strong>e no catálogo</strong> por categoria. Adicione ou remova fotos à vontade.
+          Gerencie as fotos da galeria, da capa e da página inicial do site.
         </p>
       </div>
 
-      {/* ── Foto de Capa do Site ─────────────────────────────────── */}
-      <div className="bg-white rounded-2xl shadow-card p-4 md:p-6 mb-6">
+      {/* ── Foto de Capa do Site ── */}
+      <div className="bg-white rounded-2xl shadow-card p-4 md:p-6 mb-4">
         <div className="flex items-center gap-2 mb-4">
           <Star className="w-5 h-5 text-[#F9A8D4]" />
           <h2 className="text-base font-bold text-[#1E293B]">Foto de Capa do Site</h2>
         </div>
-
         {currentHeroUrl ? (
           <div className="flex flex-col sm:flex-row gap-4 items-start">
             <div className="relative w-40 h-28 rounded-xl overflow-hidden flex-shrink-0 border-2 border-[#F9A8D4]">
-              <Image
-                src={currentHeroUrl}
-                alt="Foto de capa atual"
-                fill
-                className="object-cover object-[center_30%]"
-                sizes="160px"
-              />
+              <Image src={currentHeroUrl} alt="Foto de capa atual" fill className="object-cover" sizes="160px" />
             </div>
             <div className="flex flex-col justify-center gap-1">
-              <p className="text-sm font-semibold text-[#1E293B]">Foto atual selecionada como capa</p>
-              <p className="text-xs text-slate/50 break-all">{currentHeroUrl}</p>
+              <p className="text-sm font-semibold text-[#1E293B]">Foto atual da capa</p>
               <p className="text-xs text-slate/40 mt-1">
                 Para trocar, clique em qualquer foto da galeria abaixo e selecione{' '}
-                <strong className="text-[#1E293B]">"Usar como capa do site"</strong>.
+                <strong className="text-[#1E293B]">"Usar como capa"</strong>.
               </p>
             </div>
           </div>
         ) : (
           <p className="text-sm text-slate/40">Nenhuma foto de capa definida ainda.</p>
+        )}
+      </div>
+
+      {/* ── Fotos da Página Inicial ── */}
+      <div className="bg-white rounded-2xl shadow-card p-4 md:p-6 mb-6">
+        <div className="flex items-center gap-2 mb-1">
+          <Home className="w-5 h-5 text-[#D4AF37]" />
+          <h2 className="text-base font-bold text-[#1E293B]">Fotos da Página Inicial</h2>
+        </div>
+        <p className="text-xs text-slate/40 mb-4">
+          Essas fotos aparecem na seção de serviços e no portfólio da página inicial. As primeiras 4 vão para os cards de serviço, as primeiras 5 vão para o portfólio. Para adicionar, clique em qualquer foto da galeria e selecione <strong className="text-[#1E293B]">"Página inicial"</strong>.
+        </p>
+
+        {homepageImages.length === 0 ? (
+          <p className="text-sm text-slate/40">Nenhuma foto selecionada — usando fotos padrão do site.</p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {homepageImages.map((url, i) => (
+              <div key={url} className="relative group">
+                <div className="relative w-20 h-20 rounded-xl overflow-hidden border-2 border-[#D4AF37]">
+                  <Image src={url} alt="" fill className="object-cover" sizes="80px" />
+                  <div className="absolute top-1 left-1 w-5 h-5 rounded-full bg-[#D4AF37] flex items-center justify-center">
+                    <span className="text-[10px] font-extrabold text-white">{i + 1}</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFromHomepage(url)}
+                  className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow"
+                  aria-label="Remover"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
@@ -201,11 +257,18 @@ export default function AdminGaleriaPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {photos.map((photo) => {
               const isCover = isCurrentHero(photo.image_url)
+              const isOnHomepage = homepageImages.includes(photo.image_url)
               const isSettingThis = settingHero === photo.id
-              const justSet = heroSuccess === photo.id
+              const justSetHero = heroSuccess === photo.id
+              const justSetHomepage = homepageSuccess === photo.id
 
               return (
-                <div key={photo.id} className={`relative group aspect-square rounded-xl overflow-hidden ${isCover ? 'ring-2 ring-[#F9A8D4]' : ''}`}>
+                <div
+                  key={photo.id}
+                  className={`relative group aspect-square rounded-xl overflow-hidden ${
+                    isCover ? 'ring-2 ring-[#F9A8D4]' : isOnHomepage ? 'ring-2 ring-[#D4AF37]' : ''
+                  }`}
+                >
                   <Image
                     src={photo.image_url}
                     alt="Foto da galeria"
@@ -214,44 +277,58 @@ export default function AdminGaleriaPage() {
                     sizes="200px"
                   />
 
-                  {/* Badge: foto atual de capa */}
-                  {isCover && (
-                    <div className="absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#F9A8D4] text-[#1E293B] text-xs font-bold shadow">
-                      <Star className="w-3 h-3" />
-                      Capa
-                    </div>
-                  )}
+                  {/* Badges */}
+                  <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
+                    {isCover && (
+                      <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#F9A8D4] text-[#1E293B] text-xs font-bold shadow">
+                        <Star className="w-3 h-3" />
+                        Capa
+                      </div>
+                    )}
+                    {isOnHomepage && (
+                      <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#D4AF37] text-white text-xs font-bold shadow">
+                        <Home className="w-3 h-3" />
+                        {homepageImages.indexOf(photo.image_url) + 1}º
+                      </div>
+                    )}
+                  </div>
 
                   {/* Overlay on hover */}
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2">
-                    {/* Botão usar como capa */}
+                    {/* Usar como capa */}
                     {!isCover && (
                       <button
                         onClick={() => handleSetHero(photo)}
                         disabled={isSettingThis || isPending}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F9A8D4] text-[#1E293B] text-xs font-bold hover:bg-pink-300 transition-colors disabled:opacity-60"
                       >
-                        {isSettingThis
-                          ? <Loader2 className="w-3 h-3 animate-spin" />
-                          : justSet
-                          ? <Check className="w-3 h-3" />
-                          : <Star className="w-3 h-3" />
-                        }
-                        {justSet ? 'Definida!' : 'Usar como capa'}
+                        {isSettingThis ? <Loader2 className="w-3 h-3 animate-spin" /> : justSetHero ? <Check className="w-3 h-3" /> : <Star className="w-3 h-3" />}
+                        {justSetHero ? 'Definida!' : 'Usar como capa'}
                       </button>
                     )}
 
-                    {/* Botão deletar */}
+                    {/* Página inicial */}
+                    <button
+                      onClick={() => handleToggleHomepage(photo)}
+                      disabled={isPending}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors disabled:opacity-60 ${
+                        isOnHomepage
+                          ? 'bg-[#D4AF37] text-white hover:bg-yellow-600'
+                          : 'bg-white/90 text-[#1E293B] hover:bg-white'
+                      }`}
+                    >
+                      {justSetHomepage ? <Check className="w-3 h-3" /> : <Home className="w-3 h-3" />}
+                      {justSetHomepage ? (isOnHomepage ? 'Adicionada!' : 'Removida!') : isOnHomepage ? 'Remover da pág. inicial' : 'Página inicial'}
+                    </button>
+
+                    {/* Deletar */}
                     <button
                       onClick={() => handleDelete(photo)}
                       disabled={deletingId === photo.id}
                       aria-label="Remover foto"
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-bold hover:bg-red-600 transition-colors disabled:opacity-60"
                     >
-                      {deletingId === photo.id
-                        ? <Loader2 className="w-3 h-3 animate-spin" />
-                        : <Trash2 className="w-3 h-3" />
-                      }
+                      {deletingId === photo.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
                       Remover
                     </button>
                   </div>

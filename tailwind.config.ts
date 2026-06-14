@@ -19,7 +19,8 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        nunito: ['var(--font-nunito)', 'sans-serif'],
+        nunito: ['Nunito', 'sans-serif'],
+        playfair: ['"Playfair Display"', 'serif'],
       },
       colors: {
         border: 'hsl(var(--border))',

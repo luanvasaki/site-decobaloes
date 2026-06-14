@@ -112,7 +112,9 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       const { error: uploadError } = await supabase.storage
         .from('product-images')
         .upload(path, file, { upsert: true })
-      if (!uploadError) {
+      if (uploadError) {
+        console.error('[ProductForm] upload error:', uploadError)
+      } else {
         const { data } = supabase.storage.from('product-images').getPublicUrl(path)
         uploaded.push(data.publicUrl)
       }
@@ -180,10 +182,11 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         if (insertError) throw insertError
         const images = await uploadImages(newProduct.id)
         if (images.length > 0) {
-          await supabase
+          const { error: imgUpdateError } = await supabase
             .from('products')
             .update({ images_urls: images })
             .eq('id', newProduct.id)
+          if (imgUpdateError) console.error('[ProductForm] images_urls update error:', imgUpdateError)
         }
       }
       router.push('/admin/produtos')

@@ -14,3 +14,15 @@ export async function setHeroImageAction(url: string): Promise<{ ok: boolean }> 
   revalidatePath('/')
   return { ok: true }
 }
+
+export async function setHomepageImagesAction(urls: string[]): Promise<{ ok: boolean }> {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('settings')
+    .upsert({ key: 'homepage_images', value: JSON.stringify(urls), updated_at: new Date().toISOString() })
+
+  if (error) return { ok: false }
+
+  revalidatePath('/')
+  return { ok: true }
+}
