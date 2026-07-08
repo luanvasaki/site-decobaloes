@@ -26,3 +26,15 @@ export async function setHomepageImagesAction(urls: string[]): Promise<{ ok: boo
   revalidatePath('/')
   return { ok: true }
 }
+
+export async function setServiceTitlesAction(titles: string[]): Promise<{ ok: boolean }> {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('settings')
+    .upsert({ key: 'service_titles', value: JSON.stringify(titles), updated_at: new Date().toISOString() })
+
+  if (error) return { ok: false }
+
+  revalidatePath('/')
+  return { ok: true }
+}

@@ -5,8 +5,9 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
 import type { GalleryPhoto } from '@/services/gallery'
-import { setHeroImageAction, setHomepageImagesAction } from '@/app/actions/settings'
-import { Upload, Trash2, Loader2, ImageIcon, Star, Check, Home, X, ArrowUp, ArrowDown } from 'lucide-react'
+import { setHeroImageAction, setHomepageImagesAction, setServiceTitlesAction } from '@/app/actions/settings'
+import { SERVICE_TITLES_FALLBACK } from '@/lib/service-constants'
+import { Upload, Trash2, Loader2, ImageIcon, Star, Check, Home, X, ArrowUp, ArrowDown, Type } from 'lucide-react'
 
 export default function AdminGaleriaPage() {
   const [activeTab, setActiveTab] = useState('casamentos')
@@ -16,27 +17,62 @@ export default function AdminGaleriaPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [currentHeroUrl, setCurrentHeroUrl] = useState<string | null>(null)
   const [homepageImages, setHomepageImages] = useState<string[]>([])
+  const [serviceTitles, setServiceTitles] = useState<string[]>(SERVICE_TITLES_FALLBACK)
+  const [savingTitles, setSavingTitles] = useState(false)
+  const [titlesSaved, setTitlesSaved] = useState(false)
   const [settingHero, setSettingHero] = useState<string | null>(null)
   const [heroSuccess, setHeroSuccess] = useState<string | null>(null)
   const [homepageSuccess, setHomepageSuccess] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isPending, startTransition] = useTransition()
 
+  function updateHomepageImages(updater: (prev: string[]) => string[]) {
+    setHomepageImages((prev) => {
+      const next = updater(prev)
+      startTransition(async () => { await setHomepageImagesAction(next) })
+      return next
+    })
+  }
+
   useEffect(() => {
     const supabase = createClient()
     supabase
       .from('settings')
       .select('key, value')
-      .in('key', ['hero_image_url', 'homepage_images'])
+      .in('key', ['hero_image_url', 'homepage_images', 'service_titles'])
       .then(({ data }) => {
         data?.forEach((row) => {
           if (row.key === 'hero_image_url') setCurrentHeroUrl(row.value)
           if (row.key === 'homepage_images') {
             try { setHomepageImages(JSON.parse(row.value) ?? []) } catch { /* empty */ }
           }
+          if (row.key === 'service_titles') {
+            try {
+              const parsed = JSON.parse(row.value)
+              if (Array.isArray(parsed) && parsed.length === 4) setServiceTitles(parsed)
+            } catch { /* empty */ }
+          }
         })
       })
   }, [])
+
+  function handleTitleChange(index: number, value: string) {
+    setServiceTitles((prev) => {
+      const next = [...prev]
+      next[index] = value
+      return next
+    })
+  }
+
+  async function handleSaveTitles() {
+    setSavingTitles(true)
+    const result = await setServiceTitlesAction(serviceTitles)
+    setSavingTitles(false)
+    if (result.ok) {
+      setTitlesSaved(true)
+      setTimeout(() => setTitlesSaved(false), 2500)
+    }
+  }
 
   async function fetchPhotos() {
     setLoading(true)
@@ -112,39 +148,51 @@ export default function AdminGaleriaPage() {
   }
 
   function handleToggleHomepage(photo: GalleryPhoto) {
-    const isIn = homepageImages.includes(photo.image_url)
-    const newList = isIn
-      ? homepageImages.filter((u) => u !== photo.image_url)
-      : [...homepageImages, photo.image_url]
-    setHomepageImages(newList)
+    updateHomepageImages((prev) =>
+      prev.includes(photo.image_url)
+        ? prev.filter((u) => u !== photo.image_url)
+        : [...prev, photo.image_url]
+    )
     setHomepageSuccess(photo.id)
     setTimeout(() => setHomepageSuccess(null), 2000)
-    startTransition(async () => { await setHomepageImagesAction(newList) })
   }
 
-  async function handleMove(index: number, direction: -1 | 1) {
-    const targetIndex = index + direction
-    if (targetIndex < 0 || targetIndex >= photos.length) return
+  function handleMove(index: number, direction: -1 | 1) {
+    setPhotos((prev) => {
+      const targetIndex = index + direction
+      if (targetIndex < 0 || targetIndex >= prev.length) return prev
 
-    const current = photos[index]
-    const target = photos[targetIndex]
+      const current = prev[index]
+      const target = prev[targetIndex]
 
-    const reordered = [...photos]
-    reordered[index] = target
-    reordered[targetIndex] = current
-    setPhotos(reordered)
+      const reordered = [...prev]
+      reordered[index] = target
+      reordered[targetIndex] = current
 
-    const supabase = createClient()
-    await Promise.all([
-      supabase.from('gallery_photos').update({ sort_order: target.sort_order }).eq('id', current.id),
-      supabase.from('gallery_photos').update({ sort_order: current.sort_order }).eq('id', target.id),
-    ])
+      const supabase = createClient()
+      Promise.all([
+        supabase.from('gallery_photos').update({ sort_order: target.sort_order }).eq('id', current.id),
+        supabase.from('gallery_photos').update({ sort_order: current.sort_order }).eq('id', target.id),
+      ])
+
+      return reordered
+    })
   }
 
   function handleRemoveFromHomepage(url: string) {
-    const newList = homepageImages.filter((u) => u !== url)
-    setHomepageImages(newList)
-    startTransition(async () => { await setHomepageImagesAction(newList) })
+    updateHomepageImages((prev) => prev.filter((u) => u !== url))
+  }
+
+  function handleMoveHomepage(index: number, direction: -1 | 1) {
+    updateHomepageImages((prev) => {
+      const targetIndex = index + direction
+      if (targetIndex < 0 || targetIndex >= prev.length) return prev
+
+      const newList = [...prev]
+      const [moved] = newList.splice(index, 1)
+      newList.splice(targetIndex, 0, moved)
+      return newList
+    })
   }
 
   const isCurrentHero = (url: string) => url === currentHeroUrl
@@ -189,7 +237,7 @@ export default function AdminGaleriaPage() {
           <h2 className="text-base font-bold text-[#1E293B]">Fotos da Página Inicial</h2>
         </div>
         <p className="text-xs text-slate/40 mb-4">
-          Essas fotos aparecem na seção de serviços e no portfólio da página inicial. As primeiras 4 vão para os cards de serviço, as primeiras 5 vão para o portfólio. Para adicionar, clique em qualquer foto da galeria e selecione <strong className="text-[#1E293B]">"Página inicial"</strong>.
+          Essas fotos aparecem na seção de serviços e no portfólio da página inicial. A ordem importa: a <strong className="text-[#1E293B]">1ª foto</strong> vira o card de <strong className="text-[#1E293B]">{serviceTitles[0]}</strong>, a <strong className="text-[#1E293B]">2ª</strong> de <strong className="text-[#1E293B]">{serviceTitles[1]}</strong>, a <strong className="text-[#1E293B]">3ª</strong> de <strong className="text-[#1E293B]">{serviceTitles[2]}</strong> e a <strong className="text-[#1E293B]">4ª</strong> de <strong className="text-[#1E293B]">{serviceTitles[3]}</strong> — use as setas para ajustar. Os nomes desses cards podem ser editados logo abaixo. As 5 primeiras fotos também vão para o portfólio. Para adicionar, clique em qualquer foto da galeria e selecione <strong className="text-[#1E293B]">"Página inicial"</strong>.
         </p>
 
         {homepageImages.length === 0 ? (
@@ -203,7 +251,32 @@ export default function AdminGaleriaPage() {
                   <div className="absolute top-1 left-1 w-5 h-5 rounded-full bg-[#D4AF37] flex items-center justify-center">
                     <span className="text-[10px] font-extrabold text-white">{i + 1}</span>
                   </div>
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleMoveHomepage(i, -1)}
+                      disabled={i === 0}
+                      aria-label="Mover para a esquerda"
+                      className="w-6 h-6 rounded-lg bg-white/90 text-[#1E293B] flex items-center justify-center hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed shadow"
+                    >
+                      <ArrowUp className="w-3.5 h-3.5 -rotate-90" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleMoveHomepage(i, 1)}
+                      disabled={i === homepageImages.length - 1}
+                      aria-label="Mover para a direita"
+                      className="w-6 h-6 rounded-lg bg-white/90 text-[#1E293B] flex items-center justify-center hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed shadow"
+                    >
+                      <ArrowDown className="w-3.5 h-3.5 -rotate-90" />
+                    </button>
+                  </div>
                 </div>
+                {i < 4 && (
+                  <p className="text-[10px] text-center text-slate/40 mt-1 leading-tight">
+                    {serviceTitles[i]}
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={() => handleRemoveFromHomepage(url)}
@@ -216,6 +289,36 @@ export default function AdminGaleriaPage() {
             ))}
           </div>
         )}
+      </div>
+
+      {/* ── Nomes dos Cards de Serviço ── */}
+      <div className="bg-white rounded-2xl shadow-card p-4 md:p-6 mb-6">
+        <div className="flex items-center gap-2 mb-1">
+          <Type className="w-5 h-5 text-[#D4AF37]" />
+          <h2 className="text-base font-bold text-[#1E293B]">Nomes dos Cards de Serviço</h2>
+        </div>
+        <p className="text-xs text-slate/40 mb-4">
+          Título exibido em cada um dos 4 cards da seção "Especialidades" da página inicial.
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+          {serviceTitles.map((title, i) => (
+            <input
+              key={i}
+              value={title}
+              onChange={(e) => handleTitleChange(i, e.target.value)}
+              className="w-full px-3 py-2 rounded-xl border border-slate/15 text-sm focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40 focus:border-[#F9A8D4]"
+            />
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={handleSaveTitles}
+          disabled={savingTitles}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1E293B] text-white text-xs font-bold hover:bg-slate-700 transition-colors disabled:opacity-60"
+        >
+          {savingTitles ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : titlesSaved ? <Check className="w-3.5 h-3.5" /> : null}
+          {savingTitles ? 'Salvando...' : titlesSaved ? 'Salvo!' : 'Salvar nomes'}
+        </button>
       </div>
 
       {/* Tabs */}

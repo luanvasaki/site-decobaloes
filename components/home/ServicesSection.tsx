@@ -31,9 +31,10 @@ const SERVICES = [
 
 interface ServicesSectionProps {
   images?: string[]
+  titles?: string[]
 }
 
-export function ServicesSection({ images }: ServicesSectionProps) {
+export function ServicesSection({ images, titles }: ServicesSectionProps) {
   const imgs = images && images.length > 0 ? images : SERVICE_DEFAULTS
 
   return (
@@ -84,7 +85,7 @@ export function ServicesSection({ images }: ServicesSectionProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-6 lg:p-7">
                   <h3 className="text-xl lg:text-2xl font-extrabold text-white mb-1">
-                    {service.title}
+                    {titles?.[i] || service.title}
                   </h3>
                   <p className="text-white/70 text-sm leading-snug">{service.desc}</p>
                 </div>
