@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Hammer, Package, ZoomIn } from 'lucide-react'
 import { ProductCard } from '@/components/products/ProductCard'
 import { PhotoLightbox } from '@/components/shared/PhotoLightbox'
-import { GALLERY_CATEGORIES, FALLBACK_PHOTOS } from '@/lib/gallery-constants'
+import { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
 import type { Product, Category } from '@/types'
 import type { GalleryPhoto } from '@/services/gallery'
 
@@ -27,8 +27,7 @@ export function CatalogView({ products, categories, galleryPhotos, initialTheme 
 
   function getThemePhotos(themeId: string) {
     const db = galleryPhotos[themeId] ?? []
-    if (db.length > 0) return db.map((p) => ({ src: p.image_url, alt: 'Decoração Decobalões' }))
-    return FALLBACK_PHOTOS[themeId] ?? []
+    return db.map((p) => ({ src: p.image_url, alt: 'Decoração Decobalões' }))
   }
 
   const themeCategory = categories.find((c) => {
@@ -154,7 +153,7 @@ export function CatalogView({ products, categories, galleryPhotos, initialTheme 
                 {themeProducts.length > 0 && (
                   <div>
                     <p className="text-xs font-bold text-slate/40 uppercase tracking-widest mb-4">
-                      Itens disponíveis para aluguel
+                      Pacotes disponíveis
                     </p>
                     <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8">
                       {themeProducts.map((product, i) => (
@@ -201,10 +200,15 @@ export function CatalogView({ products, categories, galleryPhotos, initialTheme 
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {materiais.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+              <div>
+                <p className="text-xs font-bold text-slate/40 uppercase tracking-widest mb-4">
+                  Itens disponíveis para aluguel
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {materiais.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
               </div>
             )}
           </motion.div>

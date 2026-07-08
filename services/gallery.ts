@@ -5,10 +5,11 @@ export interface GalleryPhoto {
   id: string
   category: string
   image_url: string
+  sort_order: number
   created_at: string
 }
 
-export { GALLERY_CATEGORIES, FALLBACK_PHOTOS } from '@/lib/gallery-constants'
+export { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
 
 export async function getGalleryPhotos(): Promise<Record<string, GalleryPhoto[]>> {
   const supabase = await createClient()
@@ -16,7 +17,7 @@ export async function getGalleryPhotos(): Promise<Record<string, GalleryPhoto[]>
   const { data } = await supabase
     .from('gallery_photos')
     .select('*')
-    .order('created_at', { ascending: false })
+    .order('sort_order', { ascending: true })
 
   const grouped: Record<string, GalleryPhoto[]> = {}
   for (const cat of GALLERY_CATEGORIES) {

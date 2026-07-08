@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
 import type { GalleryPhoto } from '@/services/gallery'
 import { setHeroImageAction, setHomepageImagesAction } from '@/app/actions/settings'
-import { Upload, Trash2, Loader2, ImageIcon, Star, Check, Home, X } from 'lucide-react'
+import { Upload, Trash2, Loader2, ImageIcon, Star, Check, Home, X, ArrowUp, ArrowDown } from 'lucide-react'
 
 export default function AdminGaleriaPage() {
   const [activeTab, setActiveTab] = useState('casamentos')
@@ -45,7 +45,7 @@ export default function AdminGaleriaPage() {
       .from('gallery_photos')
       .select('*')
       .eq('category', activeTab)
-      .order('created_at', { ascending: false })
+      .order('sort_order', { ascending: true })
     setPhotos(data ?? [])
     setLoading(false)
   }
@@ -58,6 +58,7 @@ export default function AdminGaleriaPage() {
 
     setUploading(true)
     const supabase = createClient()
+    let nextOrder = photos.length > 0 ? Math.max(...photos.map((p) => p.sort_order)) + 1 : 0
 
     for (const file of files) {
       const ext = file.name.split('.').pop()
@@ -72,6 +73,7 @@ export default function AdminGaleriaPage() {
         await supabase.from('gallery_photos').insert({
           category: activeTab,
           image_url: data.publicUrl,
+          sort_order: nextOrder++,
         })
       }
     }
@@ -118,6 +120,25 @@ export default function AdminGaleriaPage() {
     setHomepageSuccess(photo.id)
     setTimeout(() => setHomepageSuccess(null), 2000)
     startTransition(async () => { await setHomepageImagesAction(newList) })
+  }
+
+  async function handleMove(index: number, direction: -1 | 1) {
+    const targetIndex = index + direction
+    if (targetIndex < 0 || targetIndex >= photos.length) return
+
+    const current = photos[index]
+    const target = photos[targetIndex]
+
+    const reordered = [...photos]
+    reordered[index] = target
+    reordered[targetIndex] = current
+    setPhotos(reordered)
+
+    const supabase = createClient()
+    await Promise.all([
+      supabase.from('gallery_photos').update({ sort_order: target.sort_order }).eq('id', current.id),
+      supabase.from('gallery_photos').update({ sort_order: current.sort_order }).eq('id', target.id),
+    ])
   }
 
   function handleRemoveFromHomepage(url: string) {
@@ -254,8 +275,10 @@ export default function AdminGaleriaPage() {
             <p className="text-xs">Clique em "Adicionar fotos" para começar</p>
           </div>
         ) : (
+          <>
+          <p className="text-xs text-slate/40 mb-3">Use as setas para organizar a ordem em que as fotos aparecem no site.</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {photos.map((photo) => {
+            {photos.map((photo, index) => {
               const isCover = isCurrentHero(photo.image_url)
               const isOnHomepage = homepageImages.includes(photo.image_url)
               const isSettingThis = settingHero === photo.id
@@ -276,6 +299,26 @@ export default function AdminGaleriaPage() {
                     className="object-cover"
                     sizes="200px"
                   />
+
+                  {/* Reorder controls */}
+                  <div className="absolute top-2 right-2 z-10 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => handleMove(index, -1)}
+                      disabled={index === 0}
+                      aria-label="Mover para cima"
+                      className="w-6 h-6 rounded-lg bg-white/90 text-[#1E293B] flex items-center justify-center hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed shadow"
+                    >
+                      <ArrowUp className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleMove(index, 1)}
+                      disabled={index === photos.length - 1}
+                      aria-label="Mover para baixo"
+                      className="w-6 h-6 rounded-lg bg-white/90 text-[#1E293B] flex items-center justify-center hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed shadow"
+                    >
+                      <ArrowDown className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
 
                   {/* Badges */}
                   <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
@@ -336,6 +379,7 @@ export default function AdminGaleriaPage() {
               )
             })}
           </div>
+          </>
         )}
       </div>
     </div>

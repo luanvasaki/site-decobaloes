@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ZoomIn } from 'lucide-react'
-import { GALLERY_CATEGORIES, FALLBACK_PHOTOS } from '@/lib/gallery-constants'
+import { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
 import type { GalleryPhoto } from '@/services/gallery'
 import { PhotoLightbox } from '@/components/shared/PhotoLightbox'
 
@@ -18,10 +18,7 @@ export function PhotoGallery({ photos }: PhotoGalleryProps) {
 
   function getPhotos(categoryId: string) {
     const dbPhotos = photos[categoryId] ?? []
-    if (dbPhotos.length > 0) {
-      return dbPhotos.map((p) => ({ src: p.image_url, alt: 'Decoração Decobalões' }))
-    }
-    return FALLBACK_PHOTOS[categoryId] ?? []
+    return dbPhotos.map((p) => ({ src: p.image_url, alt: 'Decoração Decobalões' }))
   }
 
   const currentPhotos = getPhotos(active)
