@@ -89,29 +89,51 @@ export default function AdminGaleriaPage() {
   useEffect(() => { fetchPhotos() }, [activeTab])
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const MAX_PHOTO_MB = 10
     const files = Array.from(e.target.files ?? [])
     if (!files.length) return
+
+    const tooLarge = files.filter((f) => f.size > MAX_PHOTO_MB * 1024 * 1024)
+    const ok = files.filter((f) => f.size <= MAX_PHOTO_MB * 1024 * 1024)
+    if (tooLarge.length > 0) {
+      alert(`${tooLarge.length === 1 ? 'A foto' : 'As fotos'} ${tooLarge.map((f) => f.name).join(', ')} ${tooLarge.length === 1 ? 'passa' : 'passam'} de ${MAX_PHOTO_MB}MB e não ${tooLarge.length === 1 ? 'foi' : 'foram'} enviada${tooLarge.length === 1 ? '' : 's'}. Tente uma versão menor.`)
+    }
+    if (ok.length === 0) {
+      if (fileInputRef.current) fileInputRef.current.value = ''
+      return
+    }
 
     setUploading(true)
     const supabase = createClient()
     let nextOrder = photos.length > 0 ? Math.max(...photos.map((p) => p.sort_order)) + 1 : 0
+    const failed: string[] = []
 
-    for (const file of files) {
+    for (const file of ok) {
       const ext = file.name.split('.').pop()
       const path = `gallery/${activeTab}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
-      const { error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(path, file, { upsert: true })
+      try {
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(path, file, { upsert: true })
 
-      if (!uploadError) {
-        const { data } = supabase.storage.from('product-images').getPublicUrl(path)
-        await supabase.from('gallery_photos').insert({
-          category: activeTab,
-          image_url: data.publicUrl,
-          sort_order: nextOrder++,
-        })
+        if (!uploadError) {
+          const { data } = supabase.storage.from('product-images').getPublicUrl(path)
+          await supabase.from('gallery_photos').insert({
+            category: activeTab,
+            image_url: data.publicUrl,
+            sort_order: nextOrder++,
+          })
+        } else {
+          failed.push(file.name)
+        }
+      } catch {
+        failed.push(file.name)
       }
+    }
+
+    if (failed.length > 0) {
+      alert(`Não foi possível enviar: ${failed.join(', ')}. Tente novamente ou use uma imagem menor.`)
     }
 
     if (fileInputRef.current) fileInputRef.current.value = ''

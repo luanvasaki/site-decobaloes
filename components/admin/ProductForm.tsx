@@ -73,6 +73,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     product?.images_urls ?? []
   )
   const [error, setError] = useState<string | null>(null)
+  const [photoWarning, setPhotoWarning] = useState<string | null>(null)
 
   const {
     register,
@@ -109,18 +110,30 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     if (imageFiles.length === 0) return existingImages
     const supabase = createClient()
     const uploaded: string[] = [...existingImages]
+    const failed: string[] = []
     for (const file of imageFiles) {
       const ext = file.name.split('.').pop()
       const path = `products/${productId}/${Date.now()}.${ext}`
-      const { error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(path, file, { upsert: true })
-      if (uploadError) {
-        console.error('[ProductForm] upload error:', uploadError)
-      } else {
-        const { data } = supabase.storage.from('product-images').getPublicUrl(path)
-        uploaded.push(data.publicUrl)
+      try {
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(path, file, { upsert: true })
+        if (uploadError) {
+          console.error('[ProductForm] upload error:', uploadError)
+          failed.push(file.name)
+        } else {
+          const { data } = supabase.storage.from('product-images').getPublicUrl(path)
+          uploaded.push(data.publicUrl)
+        }
+      } catch (err) {
+        console.error('[ProductForm] upload exception:', err)
+        failed.push(file.name)
       }
+    }
+    if (failed.length > 0) {
+      setPhotoWarning(
+        `${failed.length === 1 ? 'A foto' : 'As fotos'} ${failed.join(', ')} não ${failed.length === 1 ? 'pôde' : 'puderam'} ser enviada${failed.length === 1 ? '' : 's'} (tente uma imagem menor). O restante foi salvo normalmente.`
+      )
     }
     return uploaded
   }
@@ -129,6 +142,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     console.log('[ProductForm] onSubmit CHAMADO', data)
     setLoading(true)
     setError(null)
+    setPhotoWarning(null)
     setHasValidationError(false)
     const supabase = createClient()
     const slug = isEditing ? product.slug : slugify(data.name)
@@ -203,9 +217,19 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     }
   }
 
+  const MAX_PHOTO_MB = 10
+
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? [])
-    setImageFiles((prev) => [...prev, ...files])
+    const tooLarge = files.filter((f) => f.size > MAX_PHOTO_MB * 1024 * 1024)
+    const ok = files.filter((f) => f.size <= MAX_PHOTO_MB * 1024 * 1024)
+    setPhotoWarning(
+      tooLarge.length > 0
+        ? `${tooLarge.length === 1 ? 'A foto' : 'As fotos'} ${tooLarge.map((f) => f.name).join(', ')} ${tooLarge.length === 1 ? 'passa' : 'passam'} de ${MAX_PHOTO_MB}MB e não ${tooLarge.length === 1 ? 'foi' : 'foram'} adicionada${tooLarge.length === 1 ? '' : 's'}. Tente uma versão menor.`
+        : null
+    )
+    setImageFiles((prev) => [...prev, ...ok])
+    e.target.value = ''
   }
 
   const label = 'block text-sm font-semibold text-slate mb-1.5'
@@ -569,7 +593,10 @@ export function ProductForm({ categories, product }: ProductFormProps) {
           <span>Adicionar fotos</span>
           <input type="file" multiple accept="image/*" onChange={handleFileChange} className="sr-only" />
         </label>
-        <p className="text-xs text-slate/40">Pode selecionar várias fotos de uma vez. A primeira será a foto principal.</p>
+        <p className="text-xs text-slate/40">Pode selecionar várias fotos de uma vez (até {MAX_PHOTO_MB}MB cada). A primeira será a foto principal.</p>
+        {photoWarning && (
+          <p className="text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">{photoWarning}</p>
+        )}
       </div>
 
       {/* ── Botões ── */}
