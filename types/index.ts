@@ -12,7 +12,7 @@ export interface Product {
   description: string | null
   category_id: string | null
   product_type: 'decoracao' | 'material'
-  price_rental: number
+  price_rental: number | null
   // decoração-specific
   color_palette: string | null
   event_size: 'pequeno' | 'medio' | 'grande' | null

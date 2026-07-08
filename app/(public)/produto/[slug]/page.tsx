@@ -33,7 +33,9 @@ export async function generateMetadata({
     title: product.name,
     description:
       product.description ??
-      `Alugue ${product.name} para sua festa. ${formatCurrency(product.price_rental)} por evento.`,
+      (product.price_rental != null
+        ? `Alugue ${product.name} para sua festa. ${formatCurrency(product.price_rental)} por evento.`
+        : `Alugue ${product.name} para sua festa. Consulte disponibilidade.`),
     openGraph: {
       title: `${product.name} | Decobalões`,
       description:
@@ -113,10 +115,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
             {/* Price */}
             <div className="flex items-baseline gap-2 mb-6">
               <CircleDollarSign className="w-5 h-5 text-[#D4AF37] mb-0.5" />
-              <span className="text-3xl font-extrabold text-[#D4AF37]">
-                {formatCurrency(product.price_rental)}
-              </span>
-              <span className="text-sm text-slate/50 font-medium">/ evento</span>
+              {product.price_rental != null ? (
+                <>
+                  <span className="text-3xl font-extrabold text-[#D4AF37]">
+                    {formatCurrency(product.price_rental)}
+                  </span>
+                  <span className="text-sm text-slate/50 font-medium">/ evento</span>
+                </>
+              ) : (
+                <span className="text-2xl font-extrabold text-slate/50">A combinar</span>
+              )}
             </div>
 
             {/* Decoration details */}

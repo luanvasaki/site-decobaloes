@@ -66,10 +66,12 @@ export function ProductCard({ product, className }: ProductCardProps) {
         </h3>
 
         <div className="flex items-baseline justify-between gap-2">
-          <span className="font-extrabold text-[#D4AF37] text-base leading-none">
+          <span className={`font-extrabold text-base leading-none ${product.price_rental != null ? 'text-[#D4AF37]' : 'text-slate/50'}`}>
             {formatCurrency(product.price_rental)}
           </span>
-          <span className="text-xs text-slate/40 font-medium">/ evento</span>
+          {product.price_rental != null && (
+            <span className="text-xs text-slate/40 font-medium">/ evento</span>
+          )}
         </div>
 
         {product.product_type === 'decoracao' && product.includes_setup && (

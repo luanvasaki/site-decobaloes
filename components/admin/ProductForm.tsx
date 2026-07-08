@@ -33,8 +33,10 @@ const schema = z.object({
   category_id: z.string().optional(),
   price_rental: z.preprocess(
     toNumber,
-    z.number({ required_error: 'Preço é obrigatório', invalid_type_error: 'Digite um valor válido' })
-      .min(0.01, 'Preço deve ser maior que zero'),
+    z.number({ invalid_type_error: 'Digite um valor válido' })
+      .min(0.01, 'Preço deve ser maior que zero')
+      .optional()
+      .nullable(),
   ),
   // decoração-specific
   color_palette: z.string().optional(),
@@ -65,6 +67,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   const formRef = useRef<HTMLFormElement>(null)
   const [loading, setLoading] = useState(false)
   const [hasValidationError, setHasValidationError] = useState(false)
+  const [noPrice, setNoPrice] = useState(product != null && product.price_rental == null)
   const [imageFiles, setImageFiles] = useState<File[]>([])
   const [existingImages, setExistingImages] = useState<string[]>(
     product?.images_urls ?? []
@@ -137,7 +140,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       description: data.description || null,
       product_type: data.product_type,
       category_id: data.category_id || null,
-      price_rental: data.price_rental,
+      price_rental: noPrice ? null : (data.price_rental ?? null),
       is_available: data.is_available,
     }
 
@@ -267,7 +270,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
               <p className="font-semibold mb-2">Corrija os campos abaixo antes de salvar:</p>
               <ul className="space-y-1">
                 {errors.name && <li>• <strong>Nome:</strong> {errors.name.message}</li>}
-                {errors.price_rental && <li>• <strong>Preço:</strong> {String(errors.price_rental.message)}</li>}
+                {!noPrice && errors.price_rental && <li>• <strong>Preço:</strong> {String(errors.price_rental.message)}</li>}
                 {errors.quantity_total && <li>• <strong>Qtd. total em estoque:</strong> {errors.quantity_total.message}</li>}
                 {errors.quantity_available && <li>• <strong>Qtd. disponível:</strong> {errors.quantity_available.message}</li>}
               </ul>
@@ -353,26 +356,42 @@ export function ProductForm({ categories, product }: ProductFormProps) {
             )}
           </div>
           <div>
-            <label htmlFor="price_rental" className={label}>Preço de aluguel (R$) *</label>
-            <input
-              id="price_rental"
-              type="text"
-              inputMode="decimal"
-              {...priceRegister}
-              onBlur={(e) => {
-                const raw = e.target.value.replace(',', '.')
-                const num = parseFloat(raw)
-                if (!isNaN(num) && num > 0) {
-                  const formatted = num.toFixed(2).replace('.', ',')
-                  e.target.value = formatted
-                  setValue('price_rental', formatted as unknown as number)
-                }
-                priceRegister.onBlur(e)
-              }}
-              className={fieldCls(!!errors.price_rental)}
-              placeholder="Ex: 150,00"
-            />
-            {errors.price_rental && <p className={err}>{errors.price_rental.message}</p>}
+            <label htmlFor="price_rental" className={label}>Preço de aluguel (R$)</label>
+            {!noPrice && (
+              <>
+                <input
+                  id="price_rental"
+                  type="text"
+                  inputMode="decimal"
+                  {...priceRegister}
+                  onBlur={(e) => {
+                    const raw = e.target.value.replace(',', '.')
+                    const num = parseFloat(raw)
+                    if (!isNaN(num) && num > 0) {
+                      const formatted = num.toFixed(2).replace('.', ',')
+                      e.target.value = formatted
+                      setValue('price_rental', formatted as unknown as number)
+                    }
+                    priceRegister.onBlur(e)
+                  }}
+                  className={fieldCls(!!errors.price_rental)}
+                  placeholder="Ex: 150,00"
+                />
+                {errors.price_rental && <p className={err}>{errors.price_rental.message}</p>}
+              </>
+            )}
+            <label className="flex items-center gap-2 mt-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={noPrice}
+                onChange={(e) => {
+                  setNoPrice(e.target.checked)
+                  if (e.target.checked) setValue('price_rental', undefined)
+                }}
+                className="w-4 h-4 rounded accent-slate/40"
+              />
+              <span className="text-xs text-slate/60">A combinar (não exibir preço)</span>
+            </label>
           </div>
         </div>
       </div>
