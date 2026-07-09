@@ -27,11 +27,12 @@ export default function AdminGaleriaPage() {
   const [isPending, startTransition] = useTransition()
 
   function updateHomepageImages(updater: (prev: string[]) => string[]) {
+    let next: string[] = []
     setHomepageImages((prev) => {
-      const next = updater(prev)
-      startTransition(async () => { await setHomepageImagesAction(next) })
+      next = updater(prev)
       return next
     })
+    startTransition(async () => { await setHomepageImagesAction(next) })
   }
 
   useEffect(() => {
