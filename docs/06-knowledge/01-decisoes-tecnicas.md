@@ -272,3 +272,17 @@ Consulte antes de propor mudar algo estrutural (ex. "vamos adicionar uma API RES
 **Consequências — atenção real de produção**: como o banco de dados é compartilhado entre desenvolvimento e produção (ver ADR 4), a chave antiga `hero_image_url` já tinha um valor real configurado (uma foto de casamento). Como a chave nova (`hero_images`) começa vazia, **a foto de capa do site volta ao padrão genérico até alguém reabrir Admin → Galeria e adicionar a(s) foto(s) desejada(s) na nova seção "Fotos de Capa (Hero)"** — não foi feita uma migração automática do valor antigo porque isso exigiria uma escrita no banco autenticada (RLS), e decidimos não usar a chave de serviço (`SUPABASE_SERVICE_ROLE_KEY`) para contornar isso a partir de um script, mantendo a política já registrada de que essa chave nunca é usada no projeto (ver ADR relacionado a segurança em `../07-audits/00-auditoria-seguranca.md`).
 
 **Status**: em vigor. Ação pendente do lado do negócio: reconfigurar a(s) foto(s) de capa no admin.
+
+---
+
+## ADR 18 — Debounce + aviso de saída nas gravações automáticas da Galeria
+
+**Contexto**: logo após o ADR 17 ir ao ar, a administradora relatou que uma seleção de fotos de capa não foi salva — investigação confirmou uma condição de corrida real (gravações concorrentes fora de ordem) combinada com cancelamento de gravação ao sair da página rápido demais. Detalhe completo em `../03-licoes-aprendidas.md`.
+
+**Decisão**: `updateHeroImages` e `updateHomepageImages` (`app/admin/galeria/page.tsx`) passaram a agrupar as gravações com debounce de 600ms (cada clique cancela o envio anterior ainda não disparado e reagenda com o estado mais atual) em vez de disparar uma gravação de rede independente a cada clique. Um handler de `beforeunload` bloqueia a saída da página (fechar aba/recarregar/nova URL) enquanto houver uma gravação pendente, e um indicador visual "Salvando... não saia da página" aparece nas duas seções durante esse período.
+
+**Alternativas descartadas**: aguardar (`await`) cada gravação antes de permitir o próximo clique — rejeitada por deixar a interface visivelmente travada a cada clique, contrariando o padrão de feedback instantâneo já estabelecido no resto do admin; usar uma fila/lock explícito de requisições — mais complexo que o debounce para o mesmo resultado prático neste caso.
+
+**Consequências**: o mesmo padrão (`updateHeroImages`/`updateHomepageImages`) deveria servir de modelo para qualquer futuro "salvar automático" no projeto. O aviso de `beforeunload` só cobre saída por fechamento de aba/recarregamento/nova URL — não cobre navegação interna (client-side) da própria aplicação, que não dispara esse evento; isso não é um problema aqui porque uma navegação interna não cancela a requisição em andamento (só a leva a completar em segundo plano).
+
+**Status**: em vigor.

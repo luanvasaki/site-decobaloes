@@ -69,6 +69,14 @@ Consulte antes de mexer em upload de fotos, reordenação de galeria, formulári
 
 **Lição**: nunca rodar `npm run build` com `npm run dev` ativo no mesmo diretório do projeto. Parar um antes de rodar o outro. Se um sintoma "impossível" aparecer (imagens que existem não carregam, seções inteiras somem) logo depois de rodar os dois em paralelo, suspeitar primeiro de `.next` corrompido antes de investigar o código.
 
+## Selecionar várias fotos rápido demais podia perder a seleção (capa/home da Galeria)
+
+**O que aconteceu**: em produção, a administradora marcou algumas fotos para a nova seção "Fotos de Capa (Hero)" e saiu da tela logo em seguida — a lista salva ficou vazia (`hero_images: []`), mesmo com um `updated_at` recente confirmando que uma gravação de fato aconteceu. Duas causas raiz combinadas: (1) cada clique de "adicionar/remover" disparava sua própria gravação em segundo plano, sem esperar a anterior terminar — cliques rápidos em sequência podiam chegar ao banco fora de ordem, e o mais lento sobrescrevia o mais recente com um estado antigo; (2) sair da página (fechar a aba, recarregar, digitar outra URL) podia cancelar uma gravação ainda em andamento antes dela terminar.
+
+**Como foi resolvido**: `updateHeroImages`/`updateHomepageImages` (`app/admin/galeria/page.tsx`) passaram a agrupar (debounce de 600ms) as gravações — cada clique novo cancela o envio anterior ainda não disparado e reagenda com o estado mais atual, então uma sequência de cliques rápidos vira uma única gravação com o resultado final correto, não várias gravações concorrentes. Além disso, um aviso do navegador (`beforeunload`) agora impede sair da página por engano enquanto uma gravação ainda está pendente, e um indicador visual "Salvando... não saia da página" aparece ao lado do título da seção.
+
+**Lição**: qualquer ação de salvar-ao-clicar (sem um botão explícito de "Salvar") que dispare uma escrita de rede a cada clique — especialmente quando o usuário pode clicar em vários itens rapidamente — precisa agrupar essas escritas (debounce) para não gravar fora de ordem, e precisa avisar antes de permitir sair da página enquanto uma gravação está pendente. Esse padrão (`updateHeroImages`/`updateHomepageImages`) deveria ser o modelo para qualquer "salvar automático" novo que o projeto vier a ter.
+
 ## Regras de negócio descobertas depois do lançamento inicial
 
 O commit `feat: permite cadastrar produto sem preço definido (a combinar)` é um bom lembrete de que nem toda regra de negócio é óbvia desde o primeiro dia — a necessidade de um preço opcional só foi endereçada depois do site já estar no ar, provavelmente a partir do uso real pela equipe. **Lição geral**: esperar que o sistema evolua depois do lançamento conforme a operação real revela necessidades que não estavam claras durante o planejamento inicial — e tratar isso como parte normal do processo, não como falha de especificação.

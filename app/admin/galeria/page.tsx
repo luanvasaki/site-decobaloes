@@ -22,16 +22,30 @@ export default function AdminGaleriaPage() {
   const [titlesSaved, setTitlesSaved] = useState(false)
   const [heroSuccess, setHeroSuccess] = useState<string | null>(null)
   const [homepageSuccess, setHomepageSuccess] = useState<string | null>(null)
+  const [heroUnsaved, setHeroUnsaved] = useState(false)
+  const [homepageUnsaved, setHomepageUnsaved] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isPending, startTransition] = useTransition()
+  const heroSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const homepageSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Salva com um pequeno atraso (debounce), sempre com o estado mais recente —
+  // evita que cliques rápidos em sequência gravem fora de ordem e sobrescrevam
+  // um estado mais novo com um mais antigo.
   function updateHeroImages(updater: (prev: string[]) => string[]) {
     let next: string[] = []
     setHeroImages((prev) => {
       next = updater(prev)
       return next
     })
-    startTransition(async () => { await setHeroImagesAction(next) })
+    setHeroUnsaved(true)
+    if (heroSaveTimer.current) clearTimeout(heroSaveTimer.current)
+    heroSaveTimer.current = setTimeout(() => {
+      startTransition(async () => {
+        await setHeroImagesAction(next)
+        setHeroUnsaved(false)
+      })
+    }, 600)
   }
 
   function updateHomepageImages(updater: (prev: string[]) => string[]) {
@@ -40,8 +54,29 @@ export default function AdminGaleriaPage() {
       next = updater(prev)
       return next
     })
-    startTransition(async () => { await setHomepageImagesAction(next) })
+    setHomepageUnsaved(true)
+    if (homepageSaveTimer.current) clearTimeout(homepageSaveTimer.current)
+    homepageSaveTimer.current = setTimeout(() => {
+      startTransition(async () => {
+        await setHomepageImagesAction(next)
+        setHomepageUnsaved(false)
+      })
+    }, 600)
   }
+
+  // Avisa antes de sair da página (fechar aba, recarregar, digitar outra URL)
+  // se ainda houver uma gravação pendente — a causa real do problema relatado:
+  // sair rápido demais podia cancelar a gravação em andamento.
+  useEffect(() => {
+    function handleBeforeUnload(e: BeforeUnloadEvent) {
+      if (heroUnsaved || homepageUnsaved) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [heroUnsaved, homepageUnsaved])
 
   useEffect(() => {
     const supabase = createClient()
@@ -261,6 +296,11 @@ export default function AdminGaleriaPage() {
         <div className="flex items-center gap-2 mb-1">
           <Star className="w-5 h-5 text-[#F9A8D4]" />
           <h2 className="text-base font-bold text-[#1E293B]">Fotos de Capa (Hero)</h2>
+          {heroUnsaved && (
+            <span className="flex items-center gap-1 text-xs font-semibold text-[#D4AF37]">
+              <Loader2 className="w-3 h-3 animate-spin" /> Salvando... não saia da página
+            </span>
+          )}
         </div>
         <p className="text-xs text-slate/40 mb-4">
           A foto principal do topo da página inicial. Se você adicionar <strong className="text-[#1E293B]">mais de uma foto</strong>, elas ficam alternando automaticamente a cada poucos segundos. Use as setas para definir a ordem. Para adicionar, clique em qualquer foto da galeria abaixo e selecione <strong className="text-[#1E293B]">"Adicionar à capa"</strong>.
@@ -317,6 +357,11 @@ export default function AdminGaleriaPage() {
         <div className="flex items-center gap-2 mb-1">
           <Home className="w-5 h-5 text-[#D4AF37]" />
           <h2 className="text-base font-bold text-[#1E293B]">Fotos da Página Inicial</h2>
+          {homepageUnsaved && (
+            <span className="flex items-center gap-1 text-xs font-semibold text-[#D4AF37]">
+              <Loader2 className="w-3 h-3 animate-spin" /> Salvando... não saia da página
+            </span>
+          )}
         </div>
         <p className="text-xs text-slate/40 mb-4">
           Essas fotos aparecem na seção de serviços e no portfólio da página inicial. A ordem importa: a <strong className="text-[#1E293B]">1ª foto</strong> vira o card de <strong className="text-[#1E293B]">{serviceTitles[0]}</strong>, a <strong className="text-[#1E293B]">2ª</strong> de <strong className="text-[#1E293B]">{serviceTitles[1]}</strong>, a <strong className="text-[#1E293B]">3ª</strong> de <strong className="text-[#1E293B]">{serviceTitles[2]}</strong> e a <strong className="text-[#1E293B]">4ª</strong> de <strong className="text-[#1E293B]">{serviceTitles[3]}</strong> — use as setas para ajustar. Os nomes desses cards podem ser editados logo abaixo. As 5 primeiras fotos também vão para o portfólio. Para adicionar, clique em qualquer foto da galeria e selecione <strong className="text-[#1E293B]">"Página inicial"</strong>.
