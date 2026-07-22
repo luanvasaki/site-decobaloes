@@ -3,8 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-
-const SERVICE_DEFAULTS = ['/festa-9.jpg', '/festa-2.jpg', '/festa-1.jpg', '/festa-12.jpg']
+import { Package } from 'lucide-react'
 
 const SERVICES = [
   {
@@ -35,7 +34,7 @@ interface ServicesSectionProps {
 }
 
 export function ServicesSection({ images, titles }: ServicesSectionProps) {
-  const imgs = images && images.length > 0 ? images : SERVICE_DEFAULTS
+  const imgs = images ?? []
 
   return (
     <section className="py-20 bg-white">
@@ -84,13 +83,20 @@ export function ServicesSection({ images, titles }: ServicesSectionProps) {
                   href={service.href}
                   className="group relative flex h-[280px] sm:h-[360px] lg:h-full rounded-3xl overflow-hidden"
                 >
-                  <Image
-                    src={imgs[i] ?? SERVICE_DEFAULTS[i]}
-                    alt={service.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  />
+                  {imgs[i] ? (
+                    <Image
+                      src={imgs[i]}
+                      alt={service.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-primary-100 to-primary-50">
+                      <Package className="w-8 h-8 text-[#F9A8D4]" />
+                      <span className="text-xs font-semibold text-[#D4AF37]">Foto em breve</span>
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 p-6 lg:p-7">
                     <h3 className={`font-extrabold text-white mb-1 ${i === 0 ? 'text-2xl lg:text-3xl' : 'text-xl lg:text-2xl'}`}>

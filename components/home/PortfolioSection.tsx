@@ -5,26 +5,18 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { WhatsAppButton } from '@/components/shared/WhatsAppButton'
 
-const DEFAULT_IMAGES = [
-  '/festa-9.jpg',
-  '/festa-2.jpg',
-  '/festa-12.jpg',
-  '/festa-1.jpg',
-  '/festa-4.jpg',
-]
-
 interface PortfolioSectionProps {
   images?: string[]
 }
 
 export function PortfolioSection({ images }: PortfolioSectionProps) {
-  const srcs = images && images.length > 0 ? images : DEFAULT_IMAGES
+  const srcs = images ?? []
   const scrollRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
     const el = scrollRef.current
-    if (!el) return
+    if (!el || srcs.length === 0) return
     const onScroll = () => {
       const index = Math.round(el.scrollLeft / (el.scrollWidth / srcs.length))
       setActiveIndex(index)
@@ -40,6 +32,8 @@ export function PortfolioSection({ images }: PortfolioSectionProps) {
     el.scrollTo({ left: itemWidth * i, behavior: 'smooth' })
     setActiveIndex(i)
   }
+
+  if (srcs.length === 0) return null
 
   return (
     <section className="py-20 bg-[#faf8f5]">
