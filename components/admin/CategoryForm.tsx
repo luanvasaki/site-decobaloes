@@ -7,7 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/client'
 import { slugify } from '@/lib/utils'
-import { Loader2 } from 'lucide-react'
+import { CATEGORY_TO_THEME } from '@/lib/category-mapping'
+import { Loader2, AlertTriangle } from 'lucide-react'
 import type { Category } from '@/types'
 
 const schema = z.object({
@@ -29,11 +30,16 @@ export function CategoryForm({ category }: CategoryFormProps) {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { name: category?.name ?? '' },
   })
+
+  const nameValue = watch('name')
+  const previewSlug = slugify(nameValue || '')
+  const outsideKnownThemes = previewSlug.length > 0 && !(previewSlug in CATEGORY_TO_THEME)
 
   async function onSubmit(data: FormData) {
     setLoading(true)
@@ -84,6 +90,12 @@ export function CategoryForm({ category }: CategoryFormProps) {
           placeholder="Ex: Balões, Cenários, Mesas..."
         />
         {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
+        {!errors.name && outsideKnownThemes && (
+          <p className="flex items-start gap-1.5 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-2">
+            <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+            Esta categoria não corresponde a nenhum dos temas conhecidos do site (Casamento, Aniversário/Debutante, Festa Infantil, Chá de Bebê/Revelação). Produtos cadastrados nela <strong>não aparecerão</strong> no Catálogo nem na Galeria públicos até que o mapeamento de temas seja atualizado.
+          </p>
+        )}
       </div>
 
       <div className="flex gap-3">

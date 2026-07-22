@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Hammer, Package, Camera, ArrowRight } from 'lucide-react'
 import { ProductCard } from '@/components/products/ProductCard'
 import { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
+import { CATEGORY_TO_THEME } from '@/lib/category-mapping'
 import type { Product, Category } from '@/types'
 
 interface CatalogViewProps {
@@ -21,15 +22,7 @@ export function CatalogView({ products, categories, initialTheme }: CatalogViewP
   const decoracoes = products.filter((p) => p.product_type === 'decoracao')
   const materiais  = products.filter((p) => p.product_type === 'material')
 
-  const themeCategory = categories.find((c) => {
-    const map: Record<string, string[]> = {
-      casamentos:   ['casamento'],
-      aniversarios: ['aniversario', 'debutante'],
-      infantil:     ['festa-infantil'],
-      cha:          ['cha-de-bebe', 'cha-revelacao'],
-    }
-    return (map[activeTheme] ?? []).includes(c.slug)
-  })
+  const themeCategory = categories.find((c) => CATEGORY_TO_THEME[c.slug] === activeTheme)
   const themeProducts = themeCategory
     ? decoracoes.filter((p) => p.categories?.slug === themeCategory.slug)
     : []
