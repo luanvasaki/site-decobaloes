@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -18,6 +18,9 @@ interface PhotoLightboxProps {
 }
 
 export function PhotoLightbox({ photos, currentIndex, onClose, onNavigate }: PhotoLightboxProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+
   const prev = useCallback(() => {
     onNavigate(currentIndex === 0 ? photos.length - 1 : currentIndex - 1)
   }, [currentIndex, photos.length, onNavigate])
@@ -32,10 +35,33 @@ export function PhotoLightbox({ photos, currentIndex, onClose, onNavigate }: Pho
   }, [])
 
   useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    closeButtonRef.current?.focus()
+    return () => { previouslyFocused?.focus() }
+  }, [])
+
+  useEffect(() => {
     function handleKey(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()
       if (e.key === 'ArrowLeft') prev()
       if (e.key === 'ArrowRight') next()
+
+      if (e.key === 'Tab' && containerRef.current) {
+        const focusable = containerRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusable.length === 0) return
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
@@ -45,6 +71,10 @@ export function PhotoLightbox({ photos, currentIndex, onClose, onNavigate }: Pho
 
   return (
     <motion.div
+      ref={containerRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Visualização de foto"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -54,6 +84,7 @@ export function PhotoLightbox({ photos, currentIndex, onClose, onNavigate }: Pho
     >
       {/* Close */}
       <button
+        ref={closeButtonRef}
         onClick={onClose}
         className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-white/10 text-white hover:bg-white/25 transition-colors flex items-center justify-center z-10"
         aria-label="Fechar"
