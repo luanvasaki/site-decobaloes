@@ -31,8 +31,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Package className="w-10 h-10 text-primary-200" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-primary-100 to-primary-50">
+            <Package className="w-10 h-10 text-[#F9A8D4]" />
+            <span className="text-xs font-semibold text-[#D4AF37]">Foto em breve</span>
           </div>
         )}
 

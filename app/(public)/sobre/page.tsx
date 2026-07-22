@@ -43,7 +43,7 @@ export default function SobrePage() {
             </div>
             <h1 className="text-4xl md:text-5xl font-extrabold text-[#1E293B] mb-6 leading-tight">
               Criamos memórias que
-              <span className="block text-[#F9A8D4]">duram para sempre</span>
+              <span className="block font-playfair italic text-[#EC4899]">duram para sempre</span>
             </h1>
             <p className="text-lg text-slate/70 leading-relaxed max-w-2xl mx-auto">
               A Decobalões nasceu da crença de que cada celebração merece ser

@@ -3,11 +3,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function setHeroImageAction(url: string): Promise<{ ok: boolean }> {
+export async function setHeroImagesAction(urls: string[]): Promise<{ ok: boolean }> {
   const supabase = await createClient()
   const { error } = await supabase
     .from('settings')
-    .upsert({ key: 'hero_image_url', value: url, updated_at: new Date().toISOString() })
+    .upsert({ key: 'hero_images', value: JSON.stringify(urls), updated_at: new Date().toISOString() })
 
   if (error) return { ok: false }
 

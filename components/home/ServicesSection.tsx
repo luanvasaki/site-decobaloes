@@ -61,37 +61,47 @@ export function ServicesSection({ images, titles }: ServicesSectionProps) {
           </p>
         </motion.div>
 
-        {/* 2×2 Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {SERVICES.map((service, i) => (
-            <motion.div
-              key={service.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-            >
-              <Link
-                href={service.href}
-                className="group relative flex h-[280px] md:h-[360px] rounded-3xl overflow-hidden"
+        {/* Bento grid — primeiro item ganha destaque, os demais se organizam ao redor */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 gap-4 lg:h-[520px]">
+          {SERVICES.map((service, i) => {
+            const spanClasses = [
+              'lg:col-span-2 lg:row-span-2',
+              'lg:col-span-2 lg:row-span-1',
+              'lg:col-span-1 lg:row-span-1',
+              'lg:col-span-1 lg:row-span-1',
+            ][i]
+
+            return (
+              <motion.div
+                key={service.title}
+                className={spanClasses}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
               >
-                <Image
-                  src={imgs[i] ?? SERVICE_DEFAULTS[i]}
-                  alt={service.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  sizes="(max-width: 640px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 p-6 lg:p-7">
-                  <h3 className="text-xl lg:text-2xl font-extrabold text-white mb-1">
-                    {titles?.[i] || service.title}
-                  </h3>
-                  <p className="text-white/70 text-sm leading-snug">{service.desc}</p>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+                <Link
+                  href={service.href}
+                  className="group relative flex h-[280px] sm:h-[360px] lg:h-full rounded-3xl overflow-hidden"
+                >
+                  <Image
+                    src={imgs[i] ?? SERVICE_DEFAULTS[i]}
+                    alt={service.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 p-6 lg:p-7">
+                    <h3 className={`font-extrabold text-white mb-1 ${i === 0 ? 'text-2xl lg:text-3xl' : 'text-xl lg:text-2xl'}`}>
+                      {titles?.[i] || service.title}
+                    </h3>
+                    <p className="text-white/70 text-sm leading-snug">{service.desc}</p>
+                  </div>
+                </Link>
+              </motion.div>
+            )
+          })}
         </div>
 
       </div>

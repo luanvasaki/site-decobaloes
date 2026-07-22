@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { SERVICE_TITLES_FALLBACK } from '@/lib/service-constants'
 
-const HERO_IMAGE_FALLBACK = '/festa-9.jpg'
+const HERO_IMAGES_FALLBACK = ['/festa-9.jpg']
 
 const HOMEPAGE_IMAGES_FALLBACK = [
   '/festa-9.jpg',
@@ -11,27 +11,21 @@ const HOMEPAGE_IMAGES_FALLBACK = [
   '/festa-4.jpg',
 ]
 
-export async function getHeroImageUrl(): Promise<string> {
+export async function getHeroImages(): Promise<string[]> {
   try {
     const supabase = await createClient()
     const { data, error } = await supabase
       .from('settings')
       .select('value')
-      .eq('key', 'hero_image_url')
+      .eq('key', 'hero_images')
       .single()
 
-    if (error || !data?.value) return HERO_IMAGE_FALLBACK
-    return data.value
+    if (error || !data?.value) return HERO_IMAGES_FALLBACK
+    const parsed = JSON.parse(data.value)
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : HERO_IMAGES_FALLBACK
   } catch {
-    return HERO_IMAGE_FALLBACK
+    return HERO_IMAGES_FALLBACK
   }
-}
-
-export async function setHeroImageUrl(url: string): Promise<void> {
-  const supabase = await createClient()
-  await supabase
-    .from('settings')
-    .upsert({ key: 'hero_image_url', value: url, updated_at: new Date().toISOString() })
 }
 
 export async function getHomepageImages(): Promise<string[]> {

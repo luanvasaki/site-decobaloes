@@ -1,34 +1,24 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Hammer, Package, ZoomIn } from 'lucide-react'
+import { Hammer, Package } from 'lucide-react'
 import { ProductCard } from '@/components/products/ProductCard'
-import { PhotoLightbox } from '@/components/shared/PhotoLightbox'
 import { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
 import type { Product, Category } from '@/types'
-import type { GalleryPhoto } from '@/services/gallery'
 
 interface CatalogViewProps {
   products: Product[]
   categories: Category[]
-  galleryPhotos: Record<string, GalleryPhoto[]>
   initialTheme?: string
 }
 
-export function CatalogView({ products, categories, galleryPhotos, initialTheme }: CatalogViewProps) {
+export function CatalogView({ products, categories, initialTheme }: CatalogViewProps) {
   const [mainTab, setMainTab] = useState<'decoracao' | 'material'>('decoracao')
   const [activeTheme, setActiveTheme] = useState(initialTheme ?? GALLERY_CATEGORIES[0].id)
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
   const decoracoes = products.filter((p) => p.product_type === 'decoracao')
   const materiais  = products.filter((p) => p.product_type === 'material')
-
-  function getThemePhotos(themeId: string) {
-    const db = galleryPhotos[themeId] ?? []
-    return db.map((p) => ({ src: p.image_url, alt: 'Decoração Decobalões' }))
-  }
 
   const themeCategory = categories.find((c) => {
     const map: Record<string, string[]> = {
@@ -42,8 +32,6 @@ export function CatalogView({ products, categories, galleryPhotos, initialTheme 
   const themeProducts = themeCategory
     ? decoracoes.filter((p) => p.categories?.slug === themeCategory.slug)
     : []
-
-  const currentPhotos = getThemePhotos(activeTheme)
 
   return (
     <div>
@@ -88,13 +76,20 @@ export function CatalogView({ products, categories, galleryPhotos, initialTheme 
                 <button
                   key={cat.id}
                   onClick={() => setActiveTheme(cat.id)}
-                  className={`px-5 py-2 rounded-2xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40 ${
+                  className={`relative px-5 py-2 rounded-2xl text-sm font-bold transition-colors focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40 ${
                     activeTheme === cat.id
-                      ? 'bg-[#1E293B] text-white'
+                      ? 'text-white'
                       : 'bg-white border border-slate/10 text-slate/60 hover:border-slate/30 hover:text-slate'
                   }`}
                 >
-                  {cat.label}
+                  {activeTheme === cat.id && (
+                    <motion.span
+                      layoutId="theme-tab-pill"
+                      className="absolute inset-0 bg-[#1E293B] rounded-2xl"
+                      transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                    />
+                  )}
+                  <span className="relative">{cat.label}</span>
                 </button>
               ))}
             </div>
@@ -107,50 +102,8 @@ export function CatalogView({ products, categories, galleryPhotos, initialTheme 
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
               >
-                {/* Photo gallery */}
-                {currentPhotos.length > 0 && (
-                  <div className="mb-10">
-                    <p className="text-xs font-bold text-slate/40 uppercase tracking-widest mb-4">
-                      Trabalhos realizados
-                    </p>
-                    <div className={`grid gap-3 ${
-                      currentPhotos.length === 1 ? 'grid-cols-1 max-w-md' :
-                      currentPhotos.length === 2 ? 'grid-cols-2' :
-                      'grid-cols-2 md:grid-cols-4'
-                    }`}>
-                      {currentPhotos.map((photo, i) => (
-                        <motion.button
-                          key={photo.src}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: i * 0.06 }}
-                          onClick={() => setLightboxIndex(i)}
-                          className={`relative rounded-2xl overflow-hidden group shadow-card focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40 ${
-                            i === 0 && currentPhotos.length >= 4
-                              ? 'col-span-2 row-span-2 aspect-square'
-                              : 'aspect-square'
-                          }`}
-                        >
-                          <Image
-                            src={photo.src}
-                            alt={photo.alt}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                            sizes="(max-width: 768px) 50vw, 25vw"
-                          />
-                          <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                              <ZoomIn className="w-5 h-5 text-white" />
-                            </div>
-                          </div>
-                        </motion.button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
                 {/* Products */}
-                {themeProducts.length > 0 && (
+                {themeProducts.length > 0 ? (
                   <div>
                     <p className="text-xs font-bold text-slate/40 uppercase tracking-widest mb-4">
                       Pacotes disponíveis
@@ -168,9 +121,7 @@ export function CatalogView({ products, categories, galleryPhotos, initialTheme 
                       ))}
                     </div>
                   </div>
-                )}
-
-                {currentPhotos.length === 0 && themeProducts.length === 0 && (
+                ) : (
                   <div className="flex flex-col items-center justify-center py-20 gap-3 text-slate/30">
                     <Package className="w-12 h-12" />
                     <p className="font-semibold">Nenhum item nesta categoria ainda</p>
@@ -214,18 +165,6 @@ export function CatalogView({ products, categories, galleryPhotos, initialTheme 
           </motion.div>
         )}
 
-      </AnimatePresence>
-
-      {/* Lightbox */}
-      <AnimatePresence>
-        {lightboxIndex !== null && (
-          <PhotoLightbox
-            photos={currentPhotos}
-            currentIndex={lightboxIndex}
-            onClose={() => setLightboxIndex(null)}
-            onNavigate={setLightboxIndex}
-          />
-        )}
       </AnimatePresence>
     </div>
   )

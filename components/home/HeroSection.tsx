@@ -1,25 +1,20 @@
 import Image from 'next/image'
-import { getHeroImageUrl } from '@/services/settings'
+import { getHeroImages } from '@/services/settings'
 import { HeroContent } from '@/components/home/HeroContent'
+import { HeroPhotoCarousel } from '@/components/home/HeroPhotoCarousel'
 
 export async function HeroSection() {
-  const heroImageUrl = await getHeroImageUrl()
+  const heroImages = await getHeroImages()
 
   return (
-    <section className="min-h-screen bg-[#faf8f5] flex items-center">
+    <section className="min-h-screen bg-[#faf8f5] flex items-center overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl w-full py-8 pt-24 pb-16">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 min-h-[calc(100vh-8rem)]">
 
           {/* Left: Photo */}
-          <div className="w-full lg:w-[52%] flex-shrink-0">
+          <div className="relative w-full lg:w-[52%] flex-shrink-0">
             <div className="relative h-[55vh] sm:h-[65vh] lg:h-[80vh] rounded-3xl overflow-hidden shadow-xl">
-              <Image
-                src={heroImageUrl}
-                alt="Decoração Decobalões"
-                fill
-                className="object-cover"
-                priority
-              />
+              <HeroPhotoCarousel images={heroImages} />
 
               {/* Badge: anos — topo esquerdo */}
               <div className="absolute top-5 left-5">
@@ -33,6 +28,19 @@ export async function HeroSection() {
                 <div className="bg-white/95 backdrop-blur-sm text-[#1E293B] text-sm font-bold px-5 py-2.5 rounded-full flex items-center gap-2 shadow-lg">
                   ✨ +13.000 festas realizadas
                 </div>
+              </div>
+            </div>
+
+            {/* Foto secundária — composição em camadas, tipo "polaroid" escapando da moldura principal */}
+            <div className="hidden sm:block absolute -right-6 lg:-right-10 bottom-20 lg:bottom-28 w-28 h-36 lg:w-36 lg:h-44 rotate-6 z-10">
+              <div className="relative w-full h-full rounded-2xl overflow-hidden border-4 border-white shadow-xl">
+                <Image
+                  src="/festa-4.jpg"
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="150px"
+                />
               </div>
             </div>
           </div>

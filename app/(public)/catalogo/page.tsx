@@ -4,7 +4,6 @@ import type { Metadata } from 'next'
 import { CatalogView } from '@/components/catalog/CatalogView'
 import { getProducts } from '@/services/products'
 import { getCategories } from '@/services/categories'
-import { getGalleryPhotos } from '@/services/gallery'
 import { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
 
 export const metadata: Metadata = {
@@ -22,10 +21,9 @@ export default async function CatalogoPage({
 
   const validTheme = GALLERY_CATEGORIES.find((c) => c.id === tema)?.id
 
-  const [products, categories, galleryPhotos] = await Promise.all([
+  const [products, categories] = await Promise.all([
     getProducts({ availableOnly: true }),
     getCategories(),
-    getGalleryPhotos(),
   ])
 
   return (
@@ -45,7 +43,6 @@ export default async function CatalogoPage({
         <CatalogView
           products={products}
           categories={categories}
-          galleryPhotos={galleryPhotos}
           initialTheme={validTheme}
         />
       </div>

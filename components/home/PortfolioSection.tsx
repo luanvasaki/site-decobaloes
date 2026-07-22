@@ -70,24 +70,32 @@ export function PortfolioSection({ images }: PortfolioSectionProps) {
           ref={scrollRef}
           className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0"
         >
-          {srcs.map((src, i) => (
-            <motion.div
-              key={src + i}
-              initial={{ opacity: 0, scale: 0.96 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: i * 0.06 }}
-              className="flex-shrink-0 snap-start w-[80vw] sm:w-[46%] md:w-[31%] aspect-[4/3] rounded-2xl overflow-hidden relative"
-            >
-              <Image
-                src={src}
-                alt="Decoração Decobalões"
-                fill
-                className="object-cover hover:scale-105 transition-transform duration-500"
-                sizes="(max-width: 640px) 80vw, (max-width: 1024px) 46vw, 31vw"
-              />
-            </motion.div>
-          ))}
+          {srcs.map((src, i) => {
+            const tilt = i % 2 === 0 ? '-rotate-1' : 'rotate-1'
+            const corners =
+              i % 2 === 0
+                ? 'rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-xl rounded-bl-xl'
+                : 'rounded-tr-[2.5rem] rounded-bl-[2.5rem] rounded-tl-xl rounded-br-xl'
+
+            return (
+              <motion.div
+                key={src + i}
+                initial={{ opacity: 0, scale: 0.96 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: i * 0.06 }}
+                className={`flex-shrink-0 snap-start w-[80vw] sm:w-[46%] md:w-[31%] aspect-[4/3] ${corners} overflow-hidden relative shadow-card ${tilt} hover:rotate-0 transition-transform duration-300`}
+              >
+                <Image
+                  src={src}
+                  alt="Decoração Decobalões"
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 640px) 80vw, (max-width: 1024px) 46vw, 31vw"
+                />
+              </motion.div>
+            )
+          })}
         </div>
 
         {/* Dots */}
