@@ -32,6 +32,7 @@ As duas metades vivem no mesmo site (mesmo domínio), mas não compartilham layo
 |---|---|---|
 | Início | `/` | Vitrine de marca — hero, serviços, portfólio, chamada para WhatsApp/catálogo. |
 | Catálogo | `/catalogo` | Navegação por decorações (por tema) e materiais para locação. |
+| Galeria | `/galeria` | Fotos reais de festas já decoradas, organizadas por tema, para inspiração (2026-07-22). |
 | Produto | `/produto/[slug]` | Detalhe de um item específico, com CTA de WhatsApp já preenchido. |
 | Sobre | `/sobre` | História da marca e da fundadora, para gerar confiança. |
 | Contato | `/contato` | Todos os canais de contato reunidos (WhatsApp, e-mail, Instagram, endereço, horário). |
@@ -48,7 +49,7 @@ As duas metades vivem no mesmo site (mesmo domínio), mas não compartilham layo
 | Galeria | `/admin/galeria` | Gestão das fotos do site público (capa, home, portfólio por categoria) e dos títulos dos cards de serviço. |
 | Eventos | `/admin/eventos` (+ `novo`, `[id]`, `[id]/editar`) | Gestão de orçamentos/eventos contratados — o "CRM" do negócio. |
 
-Total: **11 rotas** no site público (contando variações dinâmicas como uma só) e **13 rotas** no admin (contando listar/novo/editar como três).
+Total: **12 rotas** no site público (contando variações dinâmicas como uma só) e **13 rotas** no admin (contando listar/novo/editar como três).
 
 ## Como usar a documentação desta pasta
 

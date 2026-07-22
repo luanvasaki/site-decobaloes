@@ -122,6 +122,45 @@ As abas de tema rolam horizontalmente em telas pequenas. A grade de produtos vai
 
 ---
 
+## Página: Galeria (`/galeria`)
+
+*(Adicionada em 2026-07-22 — ver ADR 20 em `../06-knowledge/01-decisoes-tecnicas.md`. Criada para devolver ao visitante uma forma de navegar fotos reais por tema, depois que essa grade foi removida do Catálogo por confundir com os produtos — ver ADR 14.)*
+
+### Objetivo
+Deixar o cliente navegar por fotos reais de festas já decoradas, organizadas por tema, para se inspirar e decidir o estilo antes de entrar em contato — sem misturar com o catálogo de produtos alugáveis.
+
+### Quem utiliza
+Visitantes ainda em fase de inspiração/decisão, ou que vieram do Catálogo através do link "Veja fotos reais de festas que já decoramos nesse tema".
+
+### Componentes
+- Abas por tema (Casamentos, Aniversários, Festa Infantil, Chá de Bebê — as mesmas do Catálogo), cada uma com a contagem de fotos entre parênteses e um indicador deslizante animado ao trocar de aba (mesmo padrão do Catálogo).
+- Grade de fotos do tema ativo, com o tratamento visual "orgânico" (leve rotação alternada, cantos assimétricos, desfaz ao passar o mouse) — o mesmo estilo já usado no portfólio da Home, reservado para fotos reais (nunca para produtos).
+- Clique em qualquer foto abre o visualizador em tela cheia (mesmo componente já usado no site), com navegação por setas/teclado.
+- Chamada final de WhatsApp ("Gostou de algum estilo?").
+
+### Fluxo do usuário
+Visitante chega (direto, pelo menu, ou pelo link do Catálogo já com um tema pré-selecionado via `?tema=`) → escolhe/confirma o tema → navega a grade de fotos → abre o visualizador em uma foto de interesse, navega entre as fotos daquele tema → fecha o visualizador → clica no WhatsApp ao final da página.
+
+### Estados possíveis
+Tema com fotos (grade populada); tema sem nenhuma foto ainda (estado vazio "Ainda não temos fotos nesta categoria"); visualizador de foto aberto ou fechado.
+
+### Erros possíveis
+Se a busca de fotos falhar, a página degrada para o estado vazio em todos os temas, sem travar (mesmo padrão de resiliência das demais páginas). Um tema inválido/desconhecido na URL é ignorado, caindo no primeiro tema padrão.
+
+### Regras
+As fotos exibidas são exatamente as mesmas cadastradas pela equipe em Admin → Galeria, por categoria — esta página não tem cadastro próprio, é só uma leitura organizada do mesmo conteúdo. A contagem ao lado de cada aba reflete o número real de fotos daquele tema.
+
+### SEO
+Tem título e descrição próprios ("Galeria | Decobalões"). A URL base e cada variação por tema (`?tema=`) estão listadas no mapa do site.
+
+### Acessibilidade
+Cada foto tem texto alternativo específico (tema + número da foto, não genérico). Botão de ampliar tem rótulo descritivo. O visualizador em tela cheia mantém o mesmo padrão já elogiado do Catálogo (rótulos claros, totalmente navegável por teclado).
+
+### Responsividade
+Abas de tema rolam horizontalmente em telas pequenas. A grade de fotos vai de 2 colunas (celular) a 4 colunas (desktop).
+
+---
+
 ## Página: Produto (`/produto/[slug]`)
 
 ### Objetivo

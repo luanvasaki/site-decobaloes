@@ -286,3 +286,31 @@ Consulte antes de propor mudar algo estrutural (ex. "vamos adicionar uma API RES
 **Consequências**: o mesmo padrão (`updateHeroImages`/`updateHomepageImages`) deveria servir de modelo para qualquer futuro "salvar automático" no projeto. O aviso de `beforeunload` só cobre saída por fechamento de aba/recarregamento/nova URL — não cobre navegação interna (client-side) da própria aplicação, que não dispara esse evento; isso não é um problema aqui porque uma navegação interna não cancela a requisição em andamento (só a leva a completar em segundo plano).
 
 **Status**: em vigor.
+
+---
+
+## ADR 19 — Foto "polaroid" do Hero passa a usar conteúdo real, não mais uma imagem fixa
+
+**Contexto**: a foto pequena decorativa introduzida no ADR 16 (composição em camadas do Hero) usava uma imagem estática do código (`/festa-4.jpg`), sem relação com o conteúdo real da empresa. Depois que a foto principal do Hero virou um rodízio das fotos reais (ADR 17), essa foto fixa passou a destoar — sempre a mesma, nunca refletindo o que a equipe realmente cadastra.
+
+**Decisão**: `HeroSection.tsx` passou a buscar também `getHomepageImages()` (a lista já existente de "Fotos da Página Inicial") e usar a primeira foto dessa lista (`homepageImages[0]`) como a foto do acento decorativo, no lugar da imagem fixa.
+
+**Alternativas descartadas**: sincronizar a foto pequena com o índice atual do carrossel principal (mostrando "a próxima foto da fila") — descartada por exigir levar o estado de rotação do `HeroPhotoCarousel` (Client Component) até o elemento decorativo (hoje renderizado no Server Component `HeroSection`), aumentando a complexidade para um ganho estético incerto; usar a mesma lista `hero_images` da foto principal, mas um índice diferente — descartada para evitar a foto pequena e a grande mostrarem exatamente a mesma imagem quando o carrossel chegasse naquele índice (a lista `homepage_images`, sendo um acervo diferente, evita essa coincidência).
+
+**Consequências**: a foto pequena volta a ser genuinamente parte do conteúdo real da marca. Como usa sempre o primeiro item de `homepage_images` (fixo, sem rotação própria), ela muda quando a equipe reordena essa lista no admin, mas não gira sozinha como a foto principal — continua sendo um acento estático, só que agora com uma foto de verdade.
+
+**Status**: em vigor.
+
+---
+
+## ADR 20 — Nova página `/galeria`, devolvendo a navegação de fotos por tema (fora do Catálogo)
+
+**Contexto**: o ADR 14 removeu a grade de fotos de portfólio ("Trabalhos realizados") de dentro do Catálogo, porque o mesmo tratamento visual dos produtos causava confusão sobre o que era alugável. Isso resolveu a confusão, mas também tirou do visitante uma forma de navegar fotos reais por tema — o usuário pediu explicitamente uma forma melhor de organizar essas fotos para o cliente ver a divisão por tema, passar as fotos e escolher.
+
+**Decisão**: nova página pública `/galeria` (`app/(public)/galeria/page.tsx` + `components/gallery/GaleriaView.tsx`), dedicada exclusivamente a navegar fotos reais por tema — sem nenhum produto misturado. Reaproveita quase inteiramente infraestrutura já existente: `getGalleryPhotos()` (serviço que tinha ficado sem uso depois do ADR 14, agrupa fotos por categoria), `GALLERY_CATEGORIES`, e o componente `PhotoLightbox`. A grade de fotos usa o tratamento visual "orgânico" (rotação leve, cantos assimétricos) já reservado para fotos reais no design system (`docs/03-design/00-design-system.md`). Adicionada ao menu principal (Navbar/Footer) e ao mapa do site. O Catálogo ganhou um banner de link contextual ("Veja fotos reais de festas que já decoramos nesse tema") levando à Galeria já filtrada pelo mesmo tema ativo (`/galeria?tema=...`).
+
+**Alternativas descartadas**: reintroduzir a grade de fotos dentro do próprio Catálogo (voltar atrás do ADR 14) — descartada porque resolveria a lacuna reabrindo exatamente o problema original de confusão visual com produtos; misturar as fotos de volta na seção de portfólio da Home — descartada porque a Home não é organizada por tema (é uma rolagem geral), não atenderia ao pedido específico de "divisão por tema".
+
+**Consequências**: `services/gallery.ts`'s `getGalleryPhotos()`, que tinha ficado marcado como código morto candidato a remoção (ver ADR 14), agora tem um uso real de novo — não deve mais ser considerado candidato a limpeza. A página soma mais uma rota ao site público (12 no total) e ao `sitemap.ts` (incluindo variações por tema).
+
+**Status**: em vigor.

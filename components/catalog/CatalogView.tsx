@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Hammer, Package } from 'lucide-react'
+import { Hammer, Package, Camera, ArrowRight } from 'lucide-react'
 import { ProductCard } from '@/components/products/ProductCard'
 import { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
 import type { Product, Category } from '@/types'
@@ -93,6 +94,22 @@ export function CatalogView({ products, categories, initialTheme }: CatalogViewP
                 </button>
               ))}
             </div>
+
+            {/* Link para a Galeria filtrada pelo mesmo tema */}
+            <Link
+              href={`/galeria?tema=${activeTheme}`}
+              className="group flex items-center justify-between gap-3 mb-8 px-5 py-4 rounded-2xl bg-[#fdf2f8] border border-[#F9A8D4]/30 hover:border-[#F9A8D4] transition-colors"
+            >
+              <span className="flex items-center gap-3">
+                <span className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shrink-0">
+                  <Camera className="w-4 h-4 text-[#D4AF37]" />
+                </span>
+                <span className="text-sm font-semibold text-[#1E293B]">
+                  Veja fotos reais de festas que já decoramos nesse tema
+                </span>
+              </span>
+              <ArrowRight className="w-4 h-4 text-[#D4AF37] shrink-0 group-hover:translate-x-1 transition-transform" />
+            </Link>
 
             <AnimatePresence mode="wait">
               <motion.div

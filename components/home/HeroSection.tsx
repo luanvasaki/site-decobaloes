@@ -1,10 +1,14 @@
 import Image from 'next/image'
-import { getHeroImages } from '@/services/settings'
+import { getHeroImages, getHomepageImages } from '@/services/settings'
 import { HeroContent } from '@/components/home/HeroContent'
 import { HeroPhotoCarousel } from '@/components/home/HeroPhotoCarousel'
 
 export async function HeroSection() {
-  const heroImages = await getHeroImages()
+  const [heroImages, homepageImages] = await Promise.all([
+    getHeroImages(),
+    getHomepageImages(),
+  ])
+  const accentPhoto = homepageImages[0]
 
   return (
     <section className="min-h-screen bg-[#faf8f5] flex items-center overflow-hidden">
@@ -35,7 +39,7 @@ export async function HeroSection() {
             <div className="hidden sm:block absolute -right-6 lg:-right-10 bottom-20 lg:bottom-28 w-28 h-36 lg:w-36 lg:h-44 rotate-6 z-10">
               <div className="relative w-full h-full rounded-2xl overflow-hidden border-4 border-white shadow-xl">
                 <Image
-                  src="/festa-4.jpg"
+                  src={accentPhoto}
                   alt=""
                   fill
                   className="object-cover"
