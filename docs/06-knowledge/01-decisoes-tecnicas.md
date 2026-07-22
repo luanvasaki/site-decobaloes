@@ -314,3 +314,15 @@ Consulte antes de propor mudar algo estrutural (ex. "vamos adicionar uma API RES
 **Consequências**: `services/gallery.ts`'s `getGalleryPhotos()`, que tinha ficado marcado como código morto candidato a remoção (ver ADR 14), agora tem um uso real de novo — não deve mais ser considerado candidato a limpeza. A página soma mais uma rota ao site público (12 no total) e ao `sitemap.ts` (incluindo variações por tema).
 
 **Status**: em vigor.
+
+## ADR 21 — Snapshot de `product_name` em `event_items`, em vez de depender só do join com `products`
+
+**Contexto**: achado 6 de `../07-audits/03-auditoria-produto-design-arquitetura-tecnologia.md`. `event_items.product_id` usa `on delete set null` — excluir do catálogo um produto usado num evento já concluído/faturado fazia o histórico desse evento perder a identificação do item (virava "Item avulso"), mesmo com quantidade e preço unitário preservados. O nome era calculado só em tempo real via join, nunca guardado.
+
+**Decisão**: nova coluna `event_items.product_name` (texto, nula), preenchida pela aplicação no momento em que o item é salvo — uma cópia deliberada do nome, não uma referência viva. Nenhum trigger ou função no banco (mantém a convenção já registrada em `../02-architecture/02-modelo-dados.md`: "não há funções nem triggers no banco"). Ordem de exibição do nome do item: `product_name` (snapshot) → nome vivo via join (compatibilidade com itens salvos antes desta coluna) → `custom_name` → `"Item avulso"`.
+
+**Alternativas descartadas**: trigger de banco para copiar o nome automaticamente — descartado por quebrar a convenção estabelecida de "sem triggers"; mudar `product_id` para `on delete restrict` (impedir a exclusão do produto enquanto usado em algum evento) — descartado porque impediria a equipe de limpar o catálogo de itens antigos sem primeiro caçar todo histórico de eventos que os referencia, um custo operacional maior que o problema original.
+
+**Consequências**: qualquer dado financeiro/histórico que precise sobreviver à exclusão do registro de origem (este é o primeiro caso do tipo no projeto) deveria seguir o mesmo padrão de snapshot na escrita, em vez de depender de join — vale revisitar se surgir um caso equivalente em outra tabela.
+
+**Status**: em vigor. Aplicação da migração em produção pendente de confirmação explícita do usuário (banco compartilhado entre ambientes, ver `../04-development/02-ambiente-local.md`).

@@ -33,6 +33,7 @@ export interface EventItem {
   id: string
   event_id: string
   product_id: string | null
+  product_name: string | null
   custom_name: string | null
   quantity: number
   unit_price: number

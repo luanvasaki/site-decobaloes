@@ -161,7 +161,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-white border border-slate/10">
                 <div>
                   <p className="text-sm font-semibold text-slate">
-                    {item.products?.name ?? item.custom_name ?? 'Item avulso'}
+                    {item.product_name ?? item.products?.name ?? item.custom_name ?? 'Item avulso'}
                   </p>
                   {item.notes && <p className="text-xs text-slate/50 mt-0.5">{item.notes}</p>}
                 </div>

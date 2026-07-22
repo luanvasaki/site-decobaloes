@@ -182,12 +182,13 @@ export function EventForm({ categories, products, event }: EventFormProps) {
       await supabase.from('event_items').delete().eq('event_id', eventId!)
       if (data.items.length > 0) {
         const itemsPayload = data.items.map((it) => ({
-          event_id:    eventId,
-          product_id:  it.product_id || null,
-          custom_name: it.custom_name || null,
-          quantity:    it.quantity,
-          unit_price:  it.unit_price,
-          notes:       it.notes || null,
+          event_id:     eventId,
+          product_id:   it.product_id || null,
+          product_name: it.product_id ? (products.find((p) => p.id === it.product_id)?.name ?? null) : null,
+          custom_name:  it.custom_name || null,
+          quantity:     it.quantity,
+          unit_price:   it.unit_price,
+          notes:        it.notes || null,
         }))
         const { error: ei } = await supabase.from('event_items').insert(itemsPayload)
         if (ei) throw ei

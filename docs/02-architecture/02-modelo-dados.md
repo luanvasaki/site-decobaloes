@@ -52,7 +52,9 @@ O núcleo do módulo de gestão de eventos (o "CRM" do admin). Campos agrupados 
 Importante: o campo `status` (etapa do evento) e o campo `payment_status` (situação do pagamento) são **independentes** um do outro no banco — nada impede, por exemplo, um evento "concluído" com pagamento "pendente". A consistência entre os dois é responsabilidade de quem preenche o formulário, não é imposta pelo schema.
 
 ### `event_items`
-Itens vinculados a um evento — a "lista de compras" de cada festa. Campos: `id`, `event_id` (referência a `events`, exclusão em cascata — apagar um evento apaga seus itens), `product_id` (referência a `products`, fica nulo se o produto for excluído do catálogo depois), `custom_name` (para itens avulsos que não vêm do catálogo), `quantity`, `unit_price`, `notes`.
+Itens vinculados a um evento — a "lista de compras" de cada festa. Campos: `id`, `event_id` (referência a `events`, exclusão em cascata — apagar um evento apaga seus itens), `product_id` (referência a `products`, fica nulo se o produto for excluído do catálogo depois), `product_name` (**2026-07-22**: cópia do nome do produto no momento em que o item foi salvo — um *snapshot*, não uma referência viva; existe para o histórico do evento não perder a identificação do item se o produto correspondente for excluído do catálogo depois, já que `product_id` vira nulo nesse caso), `custom_name` (para itens avulsos que não vêm do catálogo), `quantity`, `unit_price`, `notes`.
+
+Ao exibir o nome de um item, a ordem de prioridade é: `product_name` (snapshot, se existir) → nome do produto vivo via join (compatibilidade com itens salvos antes dessa coluna existir) → `custom_name` → `"Item avulso"`.
 
 ### `gallery_photos`
 Fotos de portfólio exibidas no site público. Campos: `id`, `category` (texto livre — os valores usados na prática seguem a lista fixa definida no código da aplicação, não uma restrição do banco), `image_url`, `sort_order` (ordem manual de exibição, controlada pela equipe no admin), `created_at`.
