@@ -303,7 +303,7 @@ export default function AdminGaleriaPage() {
           )}
         </div>
         <p className="text-xs text-slate/40 mb-4">
-          A foto principal do topo da página inicial. Se você adicionar <strong className="text-[#1E293B]">mais de uma foto</strong>, elas ficam alternando automaticamente a cada poucos segundos. Use as setas para definir a ordem. Para adicionar, clique em qualquer foto da galeria abaixo e selecione <strong className="text-[#1E293B]">"Adicionar à capa"</strong>.
+          A foto principal do topo da página inicial. Se você adicionar <strong className="text-[#1E293B]">mais de uma foto</strong>, elas ficam alternando automaticamente a cada poucos segundos. Use as setas para definir a ordem. Para adicionar, clique em qualquer foto da galeria abaixo e selecione <strong className="text-[#1E293B]">&quot;Adicionar à capa&quot;</strong>.
         </p>
 
         {heroImages.length === 0 ? (
@@ -364,7 +364,7 @@ export default function AdminGaleriaPage() {
           )}
         </div>
         <p className="text-xs text-slate/40 mb-4">
-          Essas fotos aparecem na seção de serviços e no portfólio da página inicial. A ordem importa: a <strong className="text-[#1E293B]">1ª foto</strong> vira o card de <strong className="text-[#1E293B]">{serviceTitles[0]}</strong>, a <strong className="text-[#1E293B]">2ª</strong> de <strong className="text-[#1E293B]">{serviceTitles[1]}</strong>, a <strong className="text-[#1E293B]">3ª</strong> de <strong className="text-[#1E293B]">{serviceTitles[2]}</strong> e a <strong className="text-[#1E293B]">4ª</strong> de <strong className="text-[#1E293B]">{serviceTitles[3]}</strong> — use as setas para ajustar. Os nomes desses cards podem ser editados logo abaixo. As 5 primeiras fotos também vão para o portfólio. Para adicionar, clique em qualquer foto da galeria e selecione <strong className="text-[#1E293B]">"Página inicial"</strong>.
+          Essas fotos aparecem na seção de serviços e no portfólio da página inicial. A ordem importa: a <strong className="text-[#1E293B]">1ª foto</strong> vira o card de <strong className="text-[#1E293B]">{serviceTitles[0]}</strong>, a <strong className="text-[#1E293B]">2ª</strong> de <strong className="text-[#1E293B]">{serviceTitles[1]}</strong>, a <strong className="text-[#1E293B]">3ª</strong> de <strong className="text-[#1E293B]">{serviceTitles[2]}</strong> e a <strong className="text-[#1E293B]">4ª</strong> de <strong className="text-[#1E293B]">{serviceTitles[3]}</strong> — use as setas para ajustar. Os nomes desses cards podem ser editados logo abaixo. As 5 primeiras fotos também vão para o portfólio. Para adicionar, clique em qualquer foto da galeria e selecione <strong className="text-[#1E293B]">&quot;Página inicial&quot;</strong>.
         </p>
 
         {homepageImages.length === 0 ? (
@@ -425,7 +425,7 @@ export default function AdminGaleriaPage() {
           <h2 className="text-base font-bold text-[#1E293B]">Nomes dos Cards de Serviço</h2>
         </div>
         <p className="text-xs text-slate/40 mb-4">
-          Título exibido em cada um dos 4 cards da seção "Especialidades" da página inicial.
+          Título exibido em cada um dos 4 cards da seção &quot;Especialidades&quot; da página inicial.
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
           {serviceTitles.map((title, i) => (
@@ -502,7 +502,7 @@ export default function AdminGaleriaPage() {
           <div className="flex flex-col items-center justify-center py-16 text-slate/30 gap-3">
             <ImageIcon className="w-12 h-12" />
             <p className="font-semibold text-sm">Nenhuma foto nesta categoria</p>
-            <p className="text-xs">Clique em "Adicionar fotos" para começar</p>
+            <p className="text-xs">Clique em &quot;Adicionar fotos&quot; para começar</p>
           </div>
         ) : (
           <>
