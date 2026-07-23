@@ -7,25 +7,24 @@ import { Hammer, Package, Camera, ArrowRight } from 'lucide-react'
 import { ProductCard } from '@/components/products/ProductCard'
 import { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
 import { CATEGORY_TO_THEME } from '@/lib/category-mapping'
-import type { Product, Category } from '@/types'
+import type { Product } from '@/types'
 
 interface CatalogViewProps {
   products: Product[]
-  categories: Category[]
   initialTheme?: string
 }
 
-export function CatalogView({ products, categories, initialTheme }: CatalogViewProps) {
+export function CatalogView({ products, initialTheme }: CatalogViewProps) {
   const [mainTab, setMainTab] = useState<'decoracao' | 'material'>('decoracao')
   const [activeTheme, setActiveTheme] = useState(initialTheme ?? GALLERY_CATEGORIES[0].id)
 
   const decoracoes = products.filter((p) => p.product_type === 'decoracao')
   const materiais  = products.filter((p) => p.product_type === 'material')
 
-  const themeCategory = categories.find((c) => CATEGORY_TO_THEME[c.slug] === activeTheme)
-  const themeProducts = themeCategory
-    ? decoracoes.filter((p) => p.categories?.slug === themeCategory.slug)
-    : []
+  const themeProducts = decoracoes.filter((p) => {
+    const slug = p.categories?.slug
+    return !!slug && CATEGORY_TO_THEME[slug] === activeTheme
+  })
 
   return (
     <div>
