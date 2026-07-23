@@ -93,7 +93,7 @@ Visitantes já comparando opções para um tipo de evento específico (casamento
 
 ### Componentes
 - Duas abas principais: "Decorações" e "Aluguel de Materiais".
-- Dentro de Decorações, sub-abas por tema (Casamentos, Aniversários, Festa Infantil, Chá de Bebê), cada uma mostrando a grade de "Pacotes disponíveis" (cartões de produto daquele tema).
+- Dentro de Decorações, sub-abas por tema (Casamentos, Aniversários, Festa Infantil, Chá Revelação), cada uma mostrando a grade de "Pacotes disponíveis" (cartões de produto daquele tema).
 - Dentro de Materiais: grade de produtos do tipo material, ou um aviso "Em breve" se ainda não há nenhum cadastrado.
 - **Cartão de produto**: foto (ou ícone de espaço reservado se não houver foto), selo da categoria, nome, preço (ou "A combinar"), indicação de "Montagem inclusa" quando aplicável — o cartão inteiro é clicável e leva à página do produto.
 
@@ -133,7 +133,7 @@ Deixar o cliente navegar por fotos reais de festas já decoradas, organizadas po
 Visitantes ainda em fase de inspiração/decisão, ou que vieram do Catálogo através do link "Veja fotos reais de festas que já decoramos nesse tema".
 
 ### Componentes
-- Abas por tema (Casamentos, Aniversários, Festa Infantil, Chá de Bebê — as mesmas do Catálogo), cada uma com a contagem de fotos entre parênteses e um indicador deslizante animado ao trocar de aba (mesmo padrão do Catálogo).
+- Abas por tema (Casamentos, Aniversários, Festa Infantil, Chá Revelação — as mesmas do Catálogo), cada uma com a contagem de fotos entre parênteses e um indicador deslizante animado ao trocar de aba (mesmo padrão do Catálogo).
 - Grade de fotos do tema ativo, com o tratamento visual "orgânico" (leve rotação alternada, cantos assimétricos, desfaz ao passar o mouse) — o mesmo estilo já usado no portfólio da Home, reservado para fotos reais (nunca para produtos).
 - Clique em qualquer foto abre o visualizador em tela cheia (mesmo componente já usado no site), com navegação por setas/teclado.
 - Chamada final de WhatsApp ("Gostou de algum estilo?").

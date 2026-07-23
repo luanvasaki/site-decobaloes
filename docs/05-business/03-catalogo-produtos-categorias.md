@@ -32,7 +32,7 @@ Cada produto tem um interruptor de "disponível para aluguel" — só produtos m
 
 ## O que é uma "categoria"
 
-Uma categoria é o rótulo que organiza tanto produtos quanto eventos por tipo de festa — Casamentos, Aniversários, Festa Infantil, Chá de Bebê, e outras que a equipe decida criar. A mesma lista de categorias serve aos dois propósitos: classificar um item do catálogo e classificar um evento contratado. Isso significa que criar uma categoria nova tem efeito nos dois lugares ao mesmo tempo — vale pensar nela pelo nome que faça sentido tanto para "que tipo de produto é este" quanto para "que tipo de festa é esta".
+Uma categoria é o rótulo que organiza tanto produtos quanto eventos por tipo de festa — Casamentos, Aniversários, Festa Infantil, Chá Revelação, e outras que a equipe decida criar. A mesma lista de categorias serve aos dois propósitos: classificar um item do catálogo e classificar um evento contratado. Isso significa que criar uma categoria nova tem efeito nos dois lugares ao mesmo tempo — vale pensar nela pelo nome que faça sentido tanto para "que tipo de produto é este" quanto para "que tipo de festa é esta".
 
 ## Quem decide o que entra no catálogo
 
@@ -44,4 +44,4 @@ Excluir uma categoria **não exclui** os produtos ou eventos associados a ela �
 
 ## Como o catálogo aparece para o cliente
 
-O visitante nunca vê a lista de categorias "crua" — o site público organiza os produtos do tipo Decoração por um conjunto fixo de "temas" (Casamentos, Aniversários, Festa Infantil, Chá de Bebê), e os do tipo Material em uma aba separada. Esse agrupamento por tema é decidido no código do site, não editável diretamente pela equipe através do admin — cadastrar uma categoria nova de decoração não cria automaticamente uma aba nova no Catálogo público, a menos que o mapeamento entre categoria e tema seja também atualizado (ver `../02-architecture/05-estrutura-pastas.md`, `lib/category-mapping.ts`). Vale ter isso em mente antes de criar uma categoria totalmente nova de decoração, esperando que ela apareça automaticamente como uma aba do site.
+O visitante nunca vê a lista de categorias "crua" — o site público organiza os produtos do tipo Decoração por um conjunto fixo de "temas" (Casamentos, Aniversários, Festa Infantil, Chá Revelação), e os do tipo Material em uma aba separada. Esse agrupamento por tema é decidido no código do site, não editável diretamente pela equipe através do admin — cadastrar uma categoria nova de decoração não cria automaticamente uma aba nova no Catálogo público, a menos que o mapeamento entre categoria e tema seja também atualizado (ver `../02-architecture/05-estrutura-pastas.md`, `lib/category-mapping.ts`). Vale ter isso em mente antes de criar uma categoria totalmente nova de decoração, esperando que ela apareça automaticamente como uma aba do site.

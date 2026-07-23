@@ -20,7 +20,7 @@ Consulte sempre que encontrar um termo desconhecido em qualquer outro documento 
 
 **A combinar** — texto exibido no lugar do preço quando um produto não tem um valor fixo cadastrado. Reflete a realidade do negócio: alguns orçamentos dependem de detalhes que só aparecem numa conversa.
 
-**Categoria** — classificação usada tanto para produtos do catálogo quanto para o tipo de um evento (ex.: Casamentos, Aniversários, Festa Infantil, Chá de Bebê). Uma única tabela de categorias serve aos dois usos.
+**Categoria** — classificação usada tanto para produtos do catálogo quanto para o tipo de um evento (ex.: Casamentos, Aniversários, Festa Infantil, Chá Revelação). Uma única tabela de categorias serve aos dois usos.
 
 **Decoração** (tipo de produto) — um dos dois tipos de item do catálogo: uma montagem de decoração para um evento, com paleta de cores e porte de evento (pequeno/médio/grande), podendo incluir montagem e desmontagem no serviço.
 
@@ -36,7 +36,7 @@ Consulte sempre que encontrar um termo desconhecido em qualquer outro documento 
 
 **Status do evento** — o estágio operacional de um evento, com cinco valores possíveis: Orçamento → Confirmado → Em andamento → Concluído, ou Cancelado (a partir de qualquer ponto).
 
-**Tema** — agrupamento usado no Catálogo e na Galeria do site público para organizar decorações por tipo de festa (Casamentos, Aniversários, Festa Infantil, Chá de Bebê). É um conceito fixo no código da aplicação, distinto (mas relacionado) das categorias cadastradas no banco de dados.
+**Tema** — agrupamento usado no Catálogo e na Galeria do site público para organizar decorações por tipo de festa (Casamentos, Aniversários, Festa Infantil, Chá Revelação). É um conceito fixo no código da aplicação, distinto (mas relacionado) das categorias cadastradas no banco de dados.
 
 ## Termos técnicos
 

@@ -272,7 +272,7 @@ Equipe interna, tipicamente após realizar um evento e querer atualizar o portf�
 1. **Fotos de capa (Hero)** — grade numerada das fotos escolhidas para a capa (ou um aviso de que nenhuma foi definida — nesse caso usa a foto padrão do site); suporta mais de uma foto, com setas para reordenar e botão para remover, igual ao padrão já usado nas fotos da página inicial. Com mais de uma foto, o Hero da Home alterna entre elas automaticamente (2026-07-21). É alimentada a partir da grade de fotos mais abaixo, marcando/desmarcando "Adicionar à capa" em cada foto.
 2. **Fotos da página inicial** — grade numerada das fotos escolhidas para a home, com setas para reordenar e botão para remover.
 3. **Nomes dos cards de serviço** — 4 campos de texto (um para cada card exibido no Início) com botão "Salvar nomes".
-4. **Abas por categoria de evento** (Casamentos, Aniversários, Festa Infantil, Chá de Bebê) — cada uma com sua própria grade de fotos.
+4. **Abas por categoria de evento** (Casamentos, Aniversários, Festa Infantil, Chá Revelação) — cada uma com sua própria grade de fotos.
 5. **Upload de fotos** — múltiplos arquivos de uma vez, com indicador de progresso.
 6. **Grade de fotos da categoria ativa** — cada foto tem, ao passar o mouse, setas para reordenar, indicações visuais de "Capa" e/ou "Página inicial", e botões para incluir/remover da home ou excluir definitivamente.
 

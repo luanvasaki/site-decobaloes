@@ -93,7 +93,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
         {!errors.name && outsideKnownThemes && (
           <p className="flex items-start gap-1.5 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-2">
             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-            Esta categoria não corresponde a nenhum dos temas conhecidos do site (Casamento, Aniversário/Debutante, Festa Infantil, Chá de Bebê/Revelação). Produtos cadastrados nela <strong>não aparecerão</strong> no Catálogo nem na Galeria públicos até que o mapeamento de temas seja atualizado.
+            Esta categoria não corresponde a nenhum dos temas conhecidos do site (Casamento, Aniversário/Debutante, Festa Infantil, Chá Revelação). Produtos cadastrados nela <strong>não aparecerão</strong> no Catálogo nem na Galeria públicos até que o mapeamento de temas seja atualizado.
           </p>
         )}
       </div>
