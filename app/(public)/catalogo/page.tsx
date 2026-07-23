@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import type { Metadata } from 'next'
 import { CatalogView } from '@/components/catalog/CatalogView'
 import { getProducts } from '@/services/products'
+import { getGalleryPhotos } from '@/services/gallery'
 import { GALLERY_CATEGORIES } from '@/lib/gallery-constants'
 
 export const metadata: Metadata = {
@@ -20,7 +21,10 @@ export default async function CatalogoPage({
 
   const validTheme = GALLERY_CATEGORIES.find((c) => c.id === tema)?.id
 
-  const products = await getProducts({ availableOnly: true })
+  const [products, galleryPhotos] = await Promise.all([
+    getProducts({ availableOnly: true }),
+    getGalleryPhotos(),
+  ])
 
   return (
     <div className="min-h-screen pt-20 pb-16">
@@ -38,6 +42,7 @@ export default async function CatalogoPage({
       <div className="container mx-auto px-4 max-w-6xl py-8">
         <CatalogView
           products={products}
+          galleryPhotos={galleryPhotos}
           initialTheme={validTheme}
         />
       </div>

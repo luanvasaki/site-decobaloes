@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Package } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Package, ZoomIn } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { PhotoLightbox } from '@/components/shared/PhotoLightbox'
 
 interface ProductGalleryProps {
   images: string[]
@@ -13,6 +14,7 @@ interface ProductGalleryProps {
 
 export function ProductGallery({ images, productName }: ProductGalleryProps) {
   const [current, setCurrent] = useState(0)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
 
   if (!images || images.length === 0) {
     return (
@@ -22,17 +24,29 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
     )
   }
 
-  function prev() {
+  function prev(e?: React.MouseEvent) {
+    e?.stopPropagation()
     setCurrent((c) => (c === 0 ? images.length - 1 : c - 1))
   }
-  function next() {
+  function next(e?: React.MouseEvent) {
+    e?.stopPropagation()
     setCurrent((c) => (c === images.length - 1 ? 0 : c + 1))
   }
+
+  const lightboxPhotos = images.map((src, i) => ({
+    src,
+    alt: `${productName} — imagem ${i + 1}`,
+  }))
 
   return (
     <div className="flex flex-col gap-3">
       {/* Main image */}
-      <div className="relative aspect-square rounded-2xl overflow-hidden bg-primary-50 shadow-card">
+      <button
+        type="button"
+        onClick={() => setLightboxOpen(true)}
+        aria-label={`Ampliar foto de ${productName}`}
+        className="group relative aspect-square rounded-2xl overflow-hidden bg-primary-50 shadow-card cursor-zoom-in focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40"
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
@@ -53,26 +67,38 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           </motion.div>
         </AnimatePresence>
 
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+          <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <ZoomIn className="w-5 h-5 text-white" />
+          </div>
+        </div>
+
         {/* Navigation arrows */}
         {images.length > 1 && (
           <>
-            <button
+            <span
+              role="button"
+              tabIndex={0}
               onClick={prev}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && prev()}
               aria-label="Imagem anterior"
               className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 text-slate flex items-center justify-center shadow-sm hover:bg-white transition-colors focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40"
             >
               <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
+            </span>
+            <span
+              role="button"
+              tabIndex={0}
               onClick={next}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && next()}
               aria-label="Próxima imagem"
               className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 text-slate flex items-center justify-center shadow-sm hover:bg-white transition-colors focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40"
             >
               <ChevronRight className="w-5 h-5" />
-            </button>
+            </span>
           </>
         )}
-      </div>
+      </button>
 
       {/* Thumbnails */}
       {images.length > 1 && (
@@ -101,6 +127,17 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           ))}
         </div>
       )}
+
+      <AnimatePresence>
+        {lightboxOpen && (
+          <PhotoLightbox
+            photos={lightboxPhotos}
+            currentIndex={current}
+            onClose={() => setLightboxOpen(false)}
+            onNavigate={setCurrent}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
