@@ -8,7 +8,7 @@ export async function HeroSection() {
     getHeroImages(),
     getHomepageImages(),
   ])
-  const accentPhoto = homepageImages[0]
+  const accentPhoto = homepageImages[0] ?? heroImages[1] ?? heroImages[0]
 
   return (
     <section className="min-h-screen bg-[#faf8f5] flex items-center overflow-hidden">
@@ -36,17 +36,19 @@ export async function HeroSection() {
             </div>
 
             {/* Foto secundária — composição em camadas, tipo "polaroid" escapando da moldura principal */}
-            <div className="hidden sm:block absolute -right-6 lg:-right-10 bottom-20 lg:bottom-28 w-28 h-36 lg:w-36 lg:h-44 rotate-6 z-10">
-              <div className="relative w-full h-full rounded-2xl overflow-hidden border-4 border-white shadow-xl">
-                <Image
-                  src={accentPhoto}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="150px"
-                />
+            {accentPhoto && (
+              <div className="hidden sm:block absolute -right-6 lg:-right-10 bottom-20 lg:bottom-28 w-28 h-36 lg:w-36 lg:h-44 rotate-6 z-10">
+                <div className="relative w-full h-full rounded-2xl overflow-hidden border-4 border-white shadow-xl">
+                  <Image
+                    src={accentPhoto}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="150px"
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Right: Content */}

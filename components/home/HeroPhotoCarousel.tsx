@@ -19,6 +19,8 @@ export function HeroPhotoCarousel({ images }: HeroPhotoCarouselProps) {
     return () => clearInterval(timer)
   }, [images.length])
 
+  if (images.length === 0) return null
+
   return (
     <AnimatePresence mode="wait">
       <motion.div

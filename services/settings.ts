@@ -1,16 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { SERVICE_TITLES_FALLBACK } from '@/lib/service-constants'
 
-const HERO_IMAGES_FALLBACK = ['/festa-9.jpg']
-
-const HOMEPAGE_IMAGES_FALLBACK = [
-  '/festa-9.jpg',
-  '/festa-2.jpg',
-  '/festa-12.jpg',
-  '/festa-1.jpg',
-  '/festa-4.jpg',
-]
-
 export async function getHeroImages(): Promise<string[]> {
   try {
     const supabase = await createClient()
@@ -20,11 +10,11 @@ export async function getHeroImages(): Promise<string[]> {
       .eq('key', 'hero_images')
       .single()
 
-    if (error || !data?.value) return HERO_IMAGES_FALLBACK
+    if (error || !data?.value) return []
     const parsed = JSON.parse(data.value)
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : HERO_IMAGES_FALLBACK
+    return Array.isArray(parsed) ? parsed : []
   } catch {
-    return HERO_IMAGES_FALLBACK
+    return []
   }
 }
 
@@ -37,11 +27,11 @@ export async function getHomepageImages(): Promise<string[]> {
       .eq('key', 'homepage_images')
       .single()
 
-    if (error || !data?.value) return HOMEPAGE_IMAGES_FALLBACK
+    if (error || !data?.value) return []
     const parsed = JSON.parse(data.value)
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : HOMEPAGE_IMAGES_FALLBACK
+    return Array.isArray(parsed) ? parsed : []
   } catch {
-    return HOMEPAGE_IMAGES_FALLBACK
+    return []
   }
 }
 
