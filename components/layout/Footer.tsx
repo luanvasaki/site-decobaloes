@@ -37,7 +37,6 @@ export function Footer() {
               {[
                 { href: '/', label: 'Início' },
                 { href: '/catalogo', label: 'Catálogo' },
-                { href: '/galeria', label: 'Galeria' },
                 { href: '/sobre', label: 'Sobre nós' },
                 { href: '/contato', label: 'Contato' },
               ].map((link) => (

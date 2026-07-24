@@ -12,7 +12,6 @@ import { getWhatsAppLink } from '@/lib/whatsapp'
 const links = [
   { href: '/', label: 'Início' },
   { href: '/catalogo', label: 'Catálogo' },
-  { href: '/galeria', label: 'Galeria' },
   { href: '/sobre', label: 'Sobre' },
   { href: '/contato', label: 'Contato' },
 ]

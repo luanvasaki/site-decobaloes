@@ -94,10 +94,13 @@ Visitantes já comparando opções para um tipo de evento específico (casamento
 ### Componentes
 - Duas abas principais: "Decorações" e "Aluguel de Materiais".
 - Dentro de Decorações, sub-abas por tema (Casamentos, Aniversários, Festa Infantil, Chá Revelação), cada uma mostrando a grade de "Pacotes disponíveis" (cartões de produto daquele tema).
+- Faixa de fotos reais daquele tema (até 4, com link "Ver todas" para a Galeria completa) — ver nota de mudança de 2026-07-23 abaixo.
 - Dentro de Materiais: grade de produtos do tipo material, ou um aviso "Em breve" se ainda não há nenhum cadastrado.
 - **Cartão de produto**: foto (ou ícone de espaço reservado se não houver foto), selo da categoria, nome, preço (ou "A combinar"), indicação de "Montagem inclusa" quando aplicável — o cartão inteiro é clicável e leva à página do produto.
 
 > **Nota de mudança (2026-07-21)**: até esta data, cada tema também exibia uma grade de fotos de portfólio ("Trabalhos realizados") acima dos produtos, com um visualizador de fotos em tela cheia. Essa seção foi removida do Catálogo por decisão de design — o mesmo tratamento visual das duas grades (fotos quadradas, cantos arredondados, mesmo efeito de hover) gerava confusão sobre o que era alugável e o que era só uma foto de referência. O portfólio geral continua disponível na Home; ver ADR correspondente em `../06-knowledge/01-decisoes-tecnicas.md`.
+
+> **Nota de mudança (2026-07-23)**: um banner que levava à Galeria (`/galeria?tema=X`, navegação completa) foi substituído por uma faixa compacta de até 4 fotos reais daquele mesmo tema, embutida na própria tela — com o tratamento visual "orgânico" reservado a fotos reais (rotação leve, cantos assimétricos), distinto do tratamento limpo dos cartões de produto, evitando repetir a confusão da nota acima. Clicar numa foto abre o visualizador em tela cheia sem sair da página. Um link "Ver todas" ao final da faixa continua levando à Galeria completa daquele tema. A faixa só aparece quando o tema ativo já tem alguma foto real cadastrada.
 
 ### Fluxo do usuário
 Visitante chega (podendo já vir com um tema pré-selecionado via link) → escolhe entre Decorações ou Materiais → dentro de Decorações, troca de tema → navega os cartões de produto → clica em um cartão → vai para a página de detalhe daquele produto. Toda a navegação de abas/tema é local à página — não recarrega nem busca dados de novo.
@@ -126,11 +129,13 @@ As abas de tema rolam horizontalmente em telas pequenas. A grade de produtos vai
 
 *(Adicionada em 2026-07-22 — ver ADR 20 em `../06-knowledge/01-decisoes-tecnicas.md`. Criada para devolver ao visitante uma forma de navegar fotos reais por tema, depois que essa grade foi removida do Catálogo por confundir com os produtos — ver ADR 14.)*
 
+**Atualização (2026-07-23)**: a página saiu do Navbar/Footer (não é mais um destino de navegação principal) depois de uma rodada de discussão entre as Skills de domínio — o Catálogo passou a mostrar uma faixa de fotos reais embutida (com lightbox in-place), cobrindo a mesma necessidade sem exigir sair da página. A rota `/galeria` continua existindo e acessível (sem redirect, sem 404) — só não tem mais link no menu; o único caminho interno restante é o "Ver todas" ao final da faixa de fotos do Catálogo (só aparece quando o tema ativo já tem fotos reais).
+
 ### Objetivo
 Deixar o cliente navegar por fotos reais de festas já decoradas, organizadas por tema, para se inspirar e decidir o estilo antes de entrar em contato — sem misturar com o catálogo de produtos alugáveis.
 
 ### Quem utiliza
-Visitantes ainda em fase de inspiração/decisão, ou que vieram do Catálogo através do link "Veja fotos reais de festas que já decoramos nesse tema".
+Visitantes que chegam direto pela URL (compartilhada ou indexada por busca) ou pelo link "Ver todas" ao final da faixa de fotos do Catálogo, já filtrados pelo mesmo tema ativo.
 
 ### Componentes
 - Abas por tema (Casamentos, Aniversários, Festa Infantil, Chá Revelação — as mesmas do Catálogo), cada uma com a contagem de fotos entre parênteses e um indicador deslizante animado ao trocar de aba (mesmo padrão do Catálogo).
@@ -151,7 +156,7 @@ Se a busca de fotos falhar, a página degrada para o estado vazio em todos os te
 As fotos exibidas são exatamente as mesmas cadastradas pela equipe em Admin → Galeria, por categoria — esta página não tem cadastro próprio, é só uma leitura organizada do mesmo conteúdo. A contagem ao lado de cada aba reflete o número real de fotos daquele tema.
 
 ### SEO
-Tem título e descrição próprios ("Galeria | Decobalões"). A URL base e cada variação por tema (`?tema=`) estão listadas no mapa do site.
+Tem título e descrição próprios ("Galeria | Decobalões"). A URL base está listada no mapa do site; cada variação por tema (`?tema=`) só entra no mapa do site se aquele tema já tiver ao menos uma foto real cadastrada — evita indexar como conteúdo uma aba que hoje mostra só o estado vazio (thin content).
 
 ### Acessibilidade
 Cada foto tem texto alternativo específico (tema + número da foto, não genérico). Botão de ampliar tem rótulo descritivo. O visualizador em tela cheia mantém o mesmo padrão já elogiado do Catálogo (rótulos claros, totalmente navegável por teclado).
@@ -171,7 +176,7 @@ Visitantes que clicaram em um cartão do Catálogo, ou que chegaram por um link 
 
 ### Componentes
 - Link "Voltar ao catálogo" no topo.
-- **Galeria do produto**: foto principal grande com transição suave ao trocar, setas de navegação (só aparecem se houver mais de uma foto), tira de miniaturas abaixo; se não houver nenhuma foto, mostra um espaço reservado no lugar de uma imagem quebrada.
+- **Galeria do produto**: foto principal grande com transição suave ao trocar, setas de navegação (só aparecem se houver mais de uma foto), tira de miniaturas abaixo; se não houver nenhuma foto, mostra um espaço reservado no lugar de uma imagem quebrada. **(2026-07-23)** Clicar na foto principal abre o mesmo visualizador em tela cheia usado na Galeria — antes não havia forma nenhuma de ver a foto sem o corte quadrado.
 - Selo da categoria (clicável, leva de volta ao Catálogo já filtrado por aquele tema).
 - Indicador de disponibilidade (verde "Disponível para aluguel" ou vermelho "Indisponível no momento").
 - Bloco de preço (valor formatado ou "A combinar").
