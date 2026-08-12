@@ -128,14 +128,15 @@ export function PhotoLightbox({ photos, currentIndex, onClose, onNavigate }: Pho
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.6}
           onDragEnd={handleDragEnd}
-          className="relative w-full max-w-5xl max-h-[90vh] aspect-square cursor-grab active:cursor-grabbing"
+          className="relative w-full max-w-5xl max-h-[90vh] aspect-square"
           onClick={(e) => e.stopPropagation()}
         >
           <Image
             src={photo.src}
             alt={photo.alt}
             fill
-            className="object-contain pointer-events-none"
+            draggable={false}
+            className="object-contain pointer-events-none select-none"
             sizes="(max-width: 768px) 100vw, 90vw"
             priority
           />
