@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/client'
 import { slugify } from '@/lib/utils'
-import { Loader2, Upload, X, Sparkles, Wrench } from 'lucide-react'
+import { Loader2, Upload, X, Sparkles, Wrench, ArrowLeft, ArrowRight, Star } from 'lucide-react'
 import type { Category, Product } from '@/types'
 
 // Normaliza vírgula → ponto antes de parsear (padrão BR: 20,50 → 20.50)
@@ -230,6 +230,16 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     )
     setImageFiles((prev) => [...prev, ...ok])
     e.target.value = ''
+  }
+
+  function moveExistingImage(index: number, direction: -1 | 1) {
+    setExistingImages((prev) => {
+      const targetIndex = index + direction
+      if (targetIndex < 0 || targetIndex >= prev.length) return prev
+      const reordered = [...prev]
+      ;[reordered[index], reordered[targetIndex]] = [reordered[targetIndex], reordered[index]]
+      return reordered
+    })
   }
 
   const label = 'block text-sm font-semibold text-slate mb-1.5'
@@ -550,11 +560,21 @@ export function ProductForm({ categories, product }: ProductFormProps) {
 
         {existingImages.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {existingImages.map((url) => (
-              <div key={url} className="relative w-20 h-20 rounded-xl overflow-hidden border border-slate/10 group">
+            {existingImages.map((url, index) => (
+              <div key={url} className={`relative w-20 h-20 rounded-xl overflow-hidden border group ${
+                index === 0 ? 'border-[#F9A8D4] ring-2 ring-[#F9A8D4]' : 'border-slate/10'
+              }`}>
                 {/* native img: Next/Image does not support remote Supabase storage URLs with no fixed dimensions */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={url} alt="" className="w-full h-full object-cover" />
+
+                {index === 0 && (
+                  <div className="absolute top-1 left-1 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-[#F9A8D4] text-[#1E293B] text-[10px] font-bold shadow">
+                    <Star className="w-2.5 h-2.5" />
+                    Capa
+                  </div>
+                )}
+
                 <button
                   type="button"
                   onClick={() => setExistingImages((prev) => prev.filter((u) => u !== url))}
@@ -563,6 +583,27 @@ export function ProductForm({ categories, product }: ProductFormProps) {
                 >
                   <X className="w-3 h-3" />
                 </button>
+
+                <div className="absolute bottom-1 left-1 right-1 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    type="button"
+                    onClick={() => moveExistingImage(index, -1)}
+                    disabled={index === 0}
+                    aria-label="Tornar foto de capa / mover para a esquerda"
+                    className="w-5 h-5 rounded-md bg-white/90 text-[#1E293B] flex items-center justify-center hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed shadow"
+                  >
+                    <ArrowLeft className="w-3 h-3" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moveExistingImage(index, 1)}
+                    disabled={index === existingImages.length - 1}
+                    aria-label="Mover para a direita"
+                    className="w-5 h-5 rounded-md bg-white/90 text-[#1E293B] flex items-center justify-center hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed shadow"
+                  >
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -593,7 +634,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
           <span>Adicionar fotos</span>
           <input type="file" multiple accept="image/*" onChange={handleFileChange} className="sr-only" />
         </label>
-        <p className="text-xs text-slate/40">Pode selecionar várias fotos de uma vez (até {MAX_PHOTO_MB}MB cada). A primeira será a foto principal.</p>
+        <p className="text-xs text-slate/40">Pode selecionar várias fotos de uma vez (até {MAX_PHOTO_MB}MB cada). Use as setas para escolher qual foto vira a capa (a primeira aparece no card do catálogo).</p>
         {photoWarning && (
           <p className="text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">{photoWarning}</p>
         )}

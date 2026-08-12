@@ -2,8 +2,10 @@
 
 import { useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, type PanInfo } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+
+const SWIPE_THRESHOLD = 60
 
 export interface LightboxPhoto {
   src: string
@@ -67,6 +69,12 @@ export function PhotoLightbox({ photos, currentIndex, onClose, onNavigate }: Pho
     return () => window.removeEventListener('keydown', handleKey)
   }, [onClose, prev, next])
 
+  const handleDragEnd = useCallback((_: unknown, info: PanInfo) => {
+    if (photos.length <= 1) return
+    if (info.offset.x < -SWIPE_THRESHOLD) next()
+    else if (info.offset.x > SWIPE_THRESHOLD) prev()
+  }, [photos.length, next, prev])
+
   const photo = photos[currentIndex]
 
   return (
@@ -116,15 +124,19 @@ export function PhotoLightbox({ photos, currentIndex, onClose, onNavigate }: Pho
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}
           transition={{ duration: 0.18 }}
-          className="relative w-full max-w-3xl max-h-[82vh] aspect-square"
+          drag={photos.length > 1 ? 'x' : false}
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.6}
+          onDragEnd={handleDragEnd}
+          className="relative w-full max-w-5xl max-h-[90vh] aspect-square cursor-grab active:cursor-grabbing"
           onClick={(e) => e.stopPropagation()}
         >
           <Image
             src={photo.src}
             alt={photo.alt}
             fill
-            className="object-contain"
-            sizes="(max-width: 768px) 100vw, 75vw"
+            className="object-contain pointer-events-none"
+            sizes="(max-width: 768px) 100vw, 90vw"
             priority
           />
         </motion.div>
