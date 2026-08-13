@@ -34,7 +34,8 @@ Cada Skill deve declarar um único domínio dono, inspirado nas áreas já mapea
 | SEO | `seo-manager` | Seções de SEO em `docs/01-product/04-paginas-publicas.md` | Metadados, sitemap, robots, dados estruturados | Decide e implementa (superfície técnica estreita: metadata/sitemap/robots) |
 | Business | `business-manager` | `docs/05-business/` | Precificação, catálogo comercial, políticas, objetivos e métricas de negócio | Decide a regra (não implementa código) |
 | Content | `content-specialist` | Texto/copy das páginas e curadoria de fotos, aplicando o tom de voz (`docs/03-design/01-identidade-visual.md`) e os limites técnicos de SEO (`seo-manager`) já decididos | Redação de copy de página e escolha/organização de fotos para a Galeria e o Catálogo | Escreve/cura conteúdo aplicando regras já decididas por Design e SEO — não redecide tom de voz nem metadados técnicos |
-| Auditoria | `project-auditor` | Todas — transversal | Revisão de padrões, código, arquitetura, documentação, UX, performance, SEO, acessibilidade, riscos | Só lê e relata — nunca decide nem implementa |
+| Auditoria | `project-auditor` | Todas — transversal | Revisão ampla e periódica de padrões, código, arquitetura, documentação, UX, performance, SEO, acessibilidade, riscos | Só lê e relata — nunca decide nem implementa |
+| Controle de Qualidade de Entregas | `delivery-reviewer` | `docs/08-skills/` — transversal | Conferência pontual, por tarefa, de toda decisão não trivial de qualquer Skill de Domínio: fidelidade ao pedido do usuário + qualidade real, antes de a entrega ser apresentada como concluída | Só aprova/reprova e relata — nunca decide nem corrige |
 | Conhecimento/Decisões | — (sem Skill dona) | `docs/06-knowledge/` | Consultado por toda Skill antes de agir; não é domínio exclusivo de uma só |
 
 **Propostas avaliadas e conscientemente não criadas** (registradas para não serem reabertas sem contexto — ver [[../06-knowledge/01-decisoes-tecnicas]], ADRs 12 e 13):

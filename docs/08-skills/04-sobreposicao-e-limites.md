@@ -80,6 +80,14 @@ Com base no mapa de domínios em vigor (ver [[01-organizacao]]), estas são as f
 **Risco**: Auditoria é transversal por natureza (lê tudo), o que pode parecer autorização para também *alterar* tudo.
 **Regra de corte**: `project-auditor` **lê e relata** — encontra e documenta problemas (o padrão já usado em `docs/07-audits/`), mas não corrige nada diretamente. Qualquer correção decorrente de um achado de auditoria deve ser delegada à Skill de Domínio dona daquela área, nunca aplicada pela própria `project-auditor`.
 
+### Delivery Reviewer vs. Project Auditor
+**Risco**: as duas "conferem o trabalho de outras Skills sem corrigir nada" — a diferença de cadência e escopo não é óbvia à primeira vista.
+**Regra de corte**: `project-auditor` faz uma **auditoria ampla e periódica** do projeto inteiro, sob demanda (código, arquitetura, documentação, UX, performance, SEO, acessibilidade, riscos — as 8 dimensões já cobertas), e produz um relatório. `delivery-reviewer` faz uma **conferência pontual, por tarefa**, de cada decisão não trivial de uma única Skill de Domínio, no exato momento em que ela está sendo entregue — antes de o resultado chegar ao usuário. Nenhuma das duas corrige: ambas só leem, avaliam e relatam; a diferença é que `project-auditor` varre o projeto todo de tempos em tempos, e `delivery-reviewer` acompanha cada entrega individual em tempo real.
+
+### Delivery Reviewer vs. todo o resto
+**Risco**: por revisar entregas de qualquer domínio, pode parecer que `delivery-reviewer` tem permissão para decidir o mérito de qualquer questão de negócio/design/técnica.
+**Regra de corte**: `delivery-reviewer` só aprova ou reprova contra dois critérios objetivos — fidelidade ao pedido do usuário e qualidade da entrega dentro do próprio domínio da Skill revisada. Não decide o mérito de uma questão sem resposta objetiva (isso continua sendo escalado ao humano, ver `docs/08-skills/07-conflitos-entre-especialistas.md`) e não corrige nada diretamente — uma reprovação sempre volta para a Skill de origem ajustar.
+
 ## Princípio: achado nunca é o mesmo domínio que correção
 
 Generalizando a regra acima (formalizada em 2026-07-21 depois de avaliar as propostas de "Bug Hunter", "Refactoring Specialist", "Technical Debt Specialist", "Security Specialist" e "Performance Optimizer" — ver [[../06-knowledge/01-decisoes-tecnicas]], ADR 13): **nenhuma Skill nova deveria ser criada só para "encontrar e corrigir X"** (bug, dívida técnica, falha de segurança, problema de performance), porque X pode estar em qualquer domínio do código, e uma Skill corretora genérica teria que ter permissão de escrita sobre todos os domínios ao mesmo tempo — o oposto do princípio de "um domínio, uma Skill dona".
@@ -89,9 +97,11 @@ O padrão correto sempre que essa proposta surgir de novo:
 - **Corrigir** é sempre da Skill de Domínio dona do código afetado (`frontend-manager` corrige um bug de componente, `database-manager` corrige uma política RLS insegura, `backend-manager` corrige uma falha de autenticação, e assim por diante) — nunca de uma Skill "corretora" à parte.
 - Manutenção rotineira e de baixo risco que hoje não tem dono claro (ex. manter dependências do `package.json` atualizadas, rodar `npm audit` periodicamente) deve ser absorvida como responsabilidade extra da Skill de Domínio mais próxima (ver `infrastructure-manager`), não virar uma Skill nova.
 
-## Composição entre estas Skills, por enquanto: nenhuma chamada direta
+## Composição entre estas Skills: nenhuma chamada direta entre Domínios, exceto para revisão
 
-Nenhuma das Skills de Domínio listadas acima invoca outra diretamente hoje (ver [[02-composicao-entre-skills]], regra de profundidade máxima) — todas declaram "Quais Skills pode chamar: nenhuma" em sua definição. Quando uma tarefa cruza a fronteira de duas Skills, a Skill atual **para e delega** (ver [[03-delegacao]]), recomendando qual Skill deveria assumir o restante, em vez de chamá-la diretamente. Chamada direta entre Skills de Domínio fica reservada para quando uma Skill de Processo orquestradora existir (ver [[01-organizacao]]) — hoje nenhuma foi criada.
+Nenhuma das Skills de Domínio listadas acima invoca outra Skill de Domínio diretamente (ver [[02-composicao-entre-skills]], regra de profundidade máxima) — todas continuam declarando "Quais Skills pode chamar: nenhuma [Skill de Domínio]" em sua definição. Quando uma tarefa cruza a fronteira de duas Skills de Domínio, a Skill atual **para e delega** (ver [[03-delegacao]]), recomendando qual Skill deveria assumir o restante, em vez de chamá-la diretamente. Chamada direta entre Skills de Domínio fica reservada para quando uma Skill de Processo orquestradora **de domínio** existir (ver [[01-organizacao]]) — hoje nenhuma foi criada.
+
+A única exceção, desde 2026-08-13, é a Skill de Processo `delivery-reviewer` (ver [[09-catalogo-de-skills]]): toda Skill de Domínio a invoca ao final de qualquer decisão não trivial, para aprovação antes de apresentar o resultado como concluído. Essa chamada não viola a regra de profundidade nem cria ciclo — `delivery-reviewer` não chama nenhuma Skill de volta, ela só é chamada.
 
 ## Revisão do mapa de escopos
 
