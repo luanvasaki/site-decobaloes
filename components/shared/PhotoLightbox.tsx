@@ -87,7 +87,7 @@ export function PhotoLightbox({ photos, currentIndex, onClose, onNavigate }: Pho
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 bg-black/92 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black/92 flex items-center justify-center p-4 cursor-default"
       onClick={onClose}
     >
       {/* Close */}
