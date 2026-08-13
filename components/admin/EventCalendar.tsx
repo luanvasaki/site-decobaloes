@@ -123,7 +123,7 @@ export function EventCalendar({ events }: EventCalendarProps) {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-4 pt-3 border-t border-slate/8">
+      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-4 pt-3 border-t border-slate/[0.08]">
         {Object.entries({ confirmado: 'Confirmado', em_andamento: 'Em andamento', concluido: 'Concluído', orcamento: 'Orçamento', cancelado: 'Cancelado' }).map(([k, v]) => (
           <span key={k} className="flex items-center gap-1 text-[10px] text-slate/50">
             <span className={cn('w-2 h-2 rounded-full', STATUS_DOT[k])} />{v}

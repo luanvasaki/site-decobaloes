@@ -51,7 +51,7 @@ export function AdminProductTable({ products }: AdminProductTableProps) {
       {/* ── Mobile: card list ── */}
       <div className="md:hidden space-y-3">
         {products.map((product) => (
-          <div key={product.id} className="flex items-center gap-3 p-3 rounded-2xl border border-slate/8 bg-slate-50/60">
+          <div key={product.id} className="flex items-center gap-3 p-3 rounded-2xl border border-slate/[0.08] bg-slate-50/60">
             {/* Thumbnail */}
             <div className="w-14 h-14 rounded-xl bg-primary-50 overflow-hidden shrink-0">
               {product.images_urls?.[0] ? (

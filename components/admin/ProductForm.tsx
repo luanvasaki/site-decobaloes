@@ -339,7 +339,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       </div>
 
       {/* ── Informações básicas ── */}
-      <div className="space-y-4 p-5 rounded-2xl bg-slate-50 border border-slate/8">
+      <div className="space-y-4 p-5 rounded-2xl bg-slate-50 border border-slate/[0.08]">
         <p className="text-xs font-bold text-slate/40 uppercase tracking-widest">Informações básicas</p>
 
         <div>
@@ -502,7 +502,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
 
       {/* ── Especificações do Material ── */}
       {!isDecoracao && (
-        <div className="space-y-4 p-5 rounded-2xl bg-slate-50 border border-slate/8">
+        <div className="space-y-4 p-5 rounded-2xl bg-slate-50 border border-slate/[0.08]">
           <div className="flex items-center gap-2">
             <Wrench className="w-4 h-4 text-slate/50" />
             <p className="text-xs font-bold text-slate/40 uppercase tracking-widest">Especificações do material</p>

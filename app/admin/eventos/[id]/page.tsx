@@ -41,7 +41,7 @@ function Field({ icon: Icon, label, value }: { icon?: React.ElementType; label: 
 
 function Section({ title, icon: Icon, children, pink }: { title: string; icon: React.ElementType; children: React.ReactNode; pink?: boolean }) {
   return (
-    <div className={`p-5 rounded-2xl border ${pink ? 'bg-[#fdf2f8] border-[#F9A8D4]/20' : 'bg-slate-50 border-slate/8'}`}>
+    <div className={`p-5 rounded-2xl border ${pink ? 'bg-[#fdf2f8] border-[#F9A8D4]/20' : 'bg-slate-50 border-slate/[0.08]'}`}>
       <p className={`text-xs font-bold uppercase tracking-widest flex items-center gap-2 mb-4 ${pink ? 'text-[#D4AF37]' : 'text-slate/40'}`}>
         <Icon className="w-3.5 h-3.5" />{title}
       </p>

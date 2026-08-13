@@ -103,7 +103,7 @@ export default async function AdminEventosPage() {
         <>
           {upcoming.length > 0 && (
             <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-              <div className="px-5 py-4 border-b border-slate/8">
+              <div className="px-5 py-4 border-b border-slate/[0.08]">
                 <h2 className="font-bold text-[#1E293B] text-sm uppercase tracking-wide">Próximos eventos</h2>
               </div>
               <div className="divide-y divide-slate/5 px-1 py-2">
@@ -114,7 +114,7 @@ export default async function AdminEventosPage() {
 
           {past.length > 0 && (
             <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-              <div className="px-5 py-4 border-b border-slate/8">
+              <div className="px-5 py-4 border-b border-slate/[0.08]">
                 <h2 className="font-bold text-slate/40 text-sm uppercase tracking-wide">Histórico</h2>
               </div>
               <div className="divide-y divide-slate/5 px-1 py-2">

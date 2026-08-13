@@ -41,7 +41,7 @@ export function AdminCategoryTable({ categories }: AdminCategoryTableProps) {
       {/* ── Mobile: card list ── */}
       <div className="md:hidden space-y-3">
         {categories.map((cat) => (
-          <div key={cat.id} className="flex items-center gap-3 p-3 rounded-2xl border border-slate/8 bg-slate-50/60">
+          <div key={cat.id} className="flex items-center gap-3 p-3 rounded-2xl border border-slate/[0.08] bg-slate-50/60">
             <div className="w-10 h-10 rounded-xl bg-[#F9A8D4]/15 flex items-center justify-center shrink-0">
               <Tag className="w-4 h-4 text-[#D4AF37]" />
             </div>

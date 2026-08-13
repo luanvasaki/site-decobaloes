@@ -207,7 +207,7 @@ export function EventForm({ categories, products, event }: EventFormProps) {
   const input = 'w-full px-4 py-2.5 rounded-xl border border-slate/15 text-sm focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40 focus:border-[#F9A8D4] transition-all bg-white'
   const label = 'block text-sm font-semibold text-slate mb-1.5'
   const errCls = 'text-xs text-red-500 mt-1'
-  const section = 'space-y-4 p-5 rounded-2xl bg-slate-50 border border-slate/8'
+  const section = 'space-y-4 p-5 rounded-2xl bg-slate-50 border border-slate/[0.08]'
   const sectionTitle = 'text-xs font-bold text-slate/40 uppercase tracking-widest flex items-center gap-2'
 
   return (

@@ -100,7 +100,7 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white/98 backdrop-blur-md border-b border-primary-100"
+            className="md:hidden bg-white/[0.98] backdrop-blur-md border-b border-primary-100"
           >
             <ul className="container mx-auto px-4 py-4 flex flex-col gap-1">
               {links.map((link) => (
