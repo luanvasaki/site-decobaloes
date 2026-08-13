@@ -153,6 +153,39 @@ export function PhotoLightbox({ photos, currentIndex, onClose, onNavigate }: Pho
           <ChevronRight className="w-5 h-5" />
         </button>
       )}
+
+      {/* Miniaturas — navegação direta em álbuns com muitas fotos */}
+      {photos.length > 1 && (
+        <div
+          className="absolute bottom-4 inset-x-0 z-10 flex justify-center px-16"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide max-w-full bg-black/40 backdrop-blur-sm rounded-2xl p-2">
+            {photos.map((p, i) => (
+              <button
+                key={p.src + i}
+                onClick={() => onNavigate(i)}
+                aria-label={`Ver foto ${i + 1}`}
+                aria-current={i === currentIndex ? 'true' : undefined}
+                className={`relative shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40 ${
+                  i === currentIndex
+                    ? 'border-[#D4AF37] shadow-gold'
+                    : 'border-transparent opacity-50 hover:opacity-100'
+                }`}
+              >
+                <Image
+                  src={p.src}
+                  alt={p.alt}
+                  fill
+                  draggable={false}
+                  className="object-cover select-none"
+                  sizes="56px"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </motion.div>
   )
 }
