@@ -64,7 +64,7 @@ Os links de contato são exatamente a informação que o cliente procura nessa p
 
 **Recomendação** (`design-manager` decide os tons, `frontend-manager` aplica): links de contato em grafite com ícone rosa; um dourado mais escuro nos eyebrows (o `#B8960F` da paleta ainda dá só 2,8:1); não usar opacidade abaixo de `/70` em texto (`/60` dá 4,0:1, ainda abaixo do mínimo).
 
-**Status (2026-10-08)**: resolvido nas páginas publicadas — novo token `gold-deep` (`#8A6D08`, 4,9:1) nos eyebrows e no "Foto em breve"; links de contato em grafite negrito; textos `/40`–`/50` passaram para `/70`. Regra registrada em `../03-design/00-design-system.md` (Acessibilidade visual). **Pendente**: os arquivos do trabalho em andamento (`AboutSection`, `HowItWorksSection`, `TestimonialsSection`, `HeroContent`, `QuickQuoteModal`) ainda usam o dourado claro em eyebrows — aplicar a mesma regra antes de publicá-los.
+**Status (2026-10-08)**: resolvido nas páginas publicadas — novo token `gold-deep` (`#8A6D08`, 4,9:1) nos eyebrows e no "Foto em breve"; links de contato em grafite negrito; textos `/40`–`/50` passaram para `/70`. Regra registrada em `../03-design/00-design-system.md` (Acessibilidade visual). A mesma regra foi aplicada depois à Home nova (`AboutSection`, `HowItWorksSection`, `HeroContent`) antes do commit dela.
 
 ---
 

@@ -1,7 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
 
 const stats = [
   { value: '13.000+', label: 'Festas Realizadas' },
@@ -23,13 +25,13 @@ export function AboutSection() {
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.6 }}
           >
-            <p className="text-sm font-bold text-[#D4AF37] uppercase tracking-widest mb-3">
+            <p className="text-sm font-bold text-gold-deep uppercase tracking-widest mb-3">
               Sobre a Empresa
             </p>
             <h2 className="text-3xl md:text-4xl font-extrabold text-[#1E293B] leading-tight mb-6">
               Criando memórias<br />inesquecíveis há mais<br />de 25 anos
             </h2>
-            <p className="text-slate/60 leading-relaxed mb-8 max-w-md">
+            <p className="text-slate/70 leading-relaxed mb-8 max-w-md">
               Na Decobalões, cada festa é uma oportunidade única de criar momentos mágicos.
               Com décadas de experiência, transformamos visões em celebrações deslumbrantes,
               cuidando de cada detalhe para que você aproveite cada instante.
@@ -41,7 +43,17 @@ export function AboutSection() {
                 <span className="text-sm font-bold text-[#1E293B] tracking-wide">Decobalões</span>
               </div>
               <div className="h-5 w-px bg-slate/10" />
-              <span className="text-sm text-slate/50 font-medium">Decorações Premium</span>
+              <span className="text-sm text-slate/70 font-medium">Decorações Premium</span>
+            </div>
+
+            <div className="pt-6">
+              <Link
+                href="/sobre"
+                className="inline-flex items-center gap-2 text-sm font-bold text-[#1E293B] hover:text-[#EC4899] transition-colors group"
+              >
+                Conhecer a história completa da Decobalões
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
           </motion.div>
 
@@ -63,7 +75,7 @@ export function AboutSection() {
                 className="p-6 rounded-2xl bg-[#fdf2f8] border border-[#F9A8D4]/20 hover:border-[#F9A8D4]/50 transition-colors"
               >
                 <p className="text-3xl md:text-4xl font-extrabold text-[#EC4899] mb-1">{stat.value}</p>
-                <p className="text-sm text-slate/60 font-medium leading-snug">{stat.label}</p>
+                <p className="text-sm text-slate/70 font-medium leading-snug">{stat.label}</p>
               </motion.div>
             ))}
           </motion.div>
