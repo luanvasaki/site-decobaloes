@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { FloatingWhatsAppButton } from '@/components/shared/FloatingWhatsAppButton'
 
 export default function PublicLayout({
   children,
@@ -11,6 +12,7 @@ export default function PublicLayout({
       <Navbar />
       <main>{children}</main>
       <Footer />
+      <FloatingWhatsAppButton />
     </>
   )
 }

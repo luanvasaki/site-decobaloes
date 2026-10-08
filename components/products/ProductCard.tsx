@@ -33,7 +33,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-primary-100 to-primary-50">
             <Package className="w-10 h-10 text-[#F9A8D4]" />
-            <span className="text-xs font-semibold text-[#D4AF37]">Foto em breve</span>
+            <span className="text-xs font-semibold text-gold-deep">Foto em breve</span>
           </div>
         )}
 
@@ -67,11 +67,11 @@ export function ProductCard({ product, className }: ProductCardProps) {
         </h3>
 
         <div className="flex items-baseline justify-between gap-2">
-          <span className={`font-extrabold text-base leading-none ${product.price_rental != null ? 'text-[#D4AF37]' : 'text-slate/50'}`}>
+          <span className={`font-extrabold text-base leading-none ${product.price_rental != null ? 'text-[#D4AF37]' : 'text-slate/70'}`}>
             {formatCurrency(product.price_rental)}
           </span>
           {product.price_rental != null && (
-            <span className="text-xs text-slate/40 font-medium">/ evento</span>
+            <span className="text-xs text-slate/70 font-medium">/ evento</span>
           )}
         </div>
 

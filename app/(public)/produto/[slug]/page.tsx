@@ -120,10 +120,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   <span className="text-3xl font-extrabold text-[#D4AF37]">
                     {formatCurrency(product.price_rental)}
                   </span>
-                  <span className="text-sm text-slate/50 font-medium">/ evento</span>
+                  <span className="text-sm text-slate/70 font-medium">/ evento</span>
                 </>
               ) : (
-                <span className="text-2xl font-extrabold text-slate/50">A combinar</span>
+                <span className="text-2xl font-extrabold text-slate/70">A combinar</span>
               )}
             </div>
 
@@ -134,7 +134,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   <div className="flex items-start gap-3 p-3 rounded-2xl bg-[#fdf2f8] border border-[#F9A8D4]/20">
                     <Palette className="w-4 h-4 text-[#D4AF37] mt-0.5 shrink-0" />
                     <div>
-                      <p className="text-xs font-bold text-slate/50 uppercase tracking-wide">Paleta de cores</p>
+                      <p className="text-xs font-bold text-slate/70 uppercase tracking-wide">Paleta de cores</p>
                       <p className="text-sm font-semibold text-slate mt-0.5">{product.color_palette}</p>
                     </div>
                   </div>
@@ -143,7 +143,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   <div className="flex items-start gap-3 p-3 rounded-2xl bg-[#fdf2f8] border border-[#F9A8D4]/20">
                     <Users className="w-4 h-4 text-[#D4AF37] mt-0.5 shrink-0" />
                     <div>
-                      <p className="text-xs font-bold text-slate/50 uppercase tracking-wide">Tamanho do evento</p>
+                      <p className="text-xs font-bold text-slate/70 uppercase tracking-wide">Tamanho do evento</p>
                       <p className="text-sm font-semibold text-slate mt-0.5">
                         {product.event_size === 'pequeno' ? 'Pequeno (até 30 pessoas)' :
                          product.event_size === 'medio' ? 'Médio (30 a 80 pessoas)' :
@@ -167,7 +167,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             {/* Description */}
             {product.description && (
               <div className="mb-8">
-                <h2 className="text-sm font-bold text-slate/50 uppercase tracking-wider mb-2">
+                <h2 className="text-sm font-bold text-slate/70 uppercase tracking-wider mb-2">
                   Descrição
                 </h2>
                 <p className="text-slate/70 leading-relaxed">{product.description}</p>
@@ -187,19 +187,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   {product.height && (
                     <div className="text-center">
                       <p className="text-lg font-bold text-slate">{product.height}cm</p>
-                      <p className="text-xs text-slate/50">Altura</p>
+                      <p className="text-xs text-slate/70">Altura</p>
                     </div>
                   )}
                   {product.width && (
                     <div className="text-center">
                       <p className="text-lg font-bold text-slate">{product.width}cm</p>
-                      <p className="text-xs text-slate/50">Largura</p>
+                      <p className="text-xs text-slate/70">Largura</p>
                     </div>
                   )}
                   {product.depth && (
                     <div className="text-center">
                       <p className="text-lg font-bold text-slate">{product.depth}cm</p>
-                      <p className="text-xs text-slate/50">Profundidade</p>
+                      <p className="text-xs text-slate/70">Profundidade</p>
                     </div>
                   )}
                 </div>

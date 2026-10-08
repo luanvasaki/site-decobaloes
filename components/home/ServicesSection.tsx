@@ -9,22 +9,22 @@ const SERVICES = [
   {
     title: 'Casamentos',
     desc: 'Do contemporâneo ao romântico, cada detalhe conta a sua história.',
-    href: '/catalogo',
+    href: '/catalogo?tema=casamentos',
   },
   {
     title: 'Aniversários',
     desc: 'Do primeiro aninho à festa adulta, decorações únicas e personalizadas.',
-    href: '/catalogo',
+    href: '/catalogo?tema=aniversarios',
   },
   {
     title: 'Festas Infantis',
     desc: 'Cenários encantadores que realizam os sonhos dos pequenos.',
-    href: '/catalogo',
+    href: '/catalogo?tema=infantil',
   },
   {
-    title: 'Debutantes',
-    desc: 'Ambientes sofisticados para a festa mais aguardada da adolescência.',
-    href: '/catalogo',
+    title: 'Chá Revelação',
+    desc: 'Cenários delicados para o momento mais esperado da descoberta.',
+    href: '/catalogo?tema=cha',
   },
 ]
 
@@ -48,7 +48,7 @@ export function ServicesSection({ images, titles }: ServicesSectionProps) {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <p className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest mb-3">
+          <p className="text-xs font-bold text-gold-deep uppercase tracking-widest mb-3">
             Especialidades
           </p>
           <h2 className="text-3xl md:text-4xl font-extrabold text-[#1E293B]">
@@ -94,7 +94,7 @@ export function ServicesSection({ images, titles }: ServicesSectionProps) {
                   ) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-primary-100 to-primary-50">
                       <Package className="w-8 h-8 text-[#F9A8D4]" />
-                      <span className="text-xs font-semibold text-[#D4AF37]">Foto em breve</span>
+                      <span className="text-xs font-semibold text-gold-deep">Foto em breve</span>
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />

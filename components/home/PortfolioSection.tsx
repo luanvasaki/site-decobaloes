@@ -47,7 +47,7 @@ export function PortfolioSection({ images }: PortfolioSectionProps) {
           transition={{ duration: 0.6 }}
           className="text-center mb-10"
         >
-          <p className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest mb-3">
+          <p className="text-xs font-bold text-gold-deep uppercase tracking-widest mb-3">
             Portfólio
           </p>
           <h2 className="text-3xl md:text-4xl font-extrabold text-[#1E293B]">

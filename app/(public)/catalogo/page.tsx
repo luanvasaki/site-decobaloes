@@ -30,7 +30,7 @@ export default async function CatalogoPage({
     <div className="min-h-screen pt-20 pb-16">
       <div className="bg-gradient-to-b from-[#fdf2f8] to-white py-12">
         <div className="container mx-auto px-4 max-w-6xl">
-          <p className="text-sm font-bold text-[#D4AF37] uppercase tracking-widest mb-2">
+          <p className="text-sm font-bold text-gold-deep uppercase tracking-widest mb-2">
             Catálogo
           </p>
           <h1 className="text-3xl md:text-4xl font-extrabold text-[#1E293B]">

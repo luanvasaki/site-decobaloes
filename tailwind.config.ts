@@ -42,6 +42,7 @@ const config: Config = {
           DEFAULT: '#D4AF37',
           light: '#E8C84A',
           dark: '#B8960F',
+          deep: '#8A6D08',
         },
         slate: {
           DEFAULT: '#1E293B',

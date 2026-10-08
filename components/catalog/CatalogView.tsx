@@ -102,7 +102,7 @@ export function CatalogView({ products, galleryPhotos, initialTheme }: CatalogVi
             {/* Fotos reais deste tema — abre lightbox na própria página, sem navegar */}
             {themePhotos.length > 0 && (
               <div className="mb-8">
-                <p className="text-xs font-bold text-slate/40 uppercase tracking-widest mb-3">
+                <p className="text-xs font-bold text-slate/70 uppercase tracking-widest mb-3">
                   Fotos reais deste tema
                 </p>
                 <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
@@ -151,7 +151,7 @@ export function CatalogView({ products, galleryPhotos, initialTheme }: CatalogVi
                 {/* Products */}
                 {themeProducts.length > 0 ? (
                   <div>
-                    <p className="text-xs font-bold text-slate/40 uppercase tracking-widest mb-4">
+                    <p className="text-xs font-bold text-slate/70 uppercase tracking-widest mb-4">
                       Pacotes disponíveis
                     </p>
                     <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8">
@@ -191,14 +191,14 @@ export function CatalogView({ products, galleryPhotos, initialTheme }: CatalogVi
               <div className="flex flex-col items-center justify-center py-24 gap-4 text-center max-w-md mx-auto">
                 <Hammer className="w-16 h-16 text-[#D4AF37]/30" />
                 <p className="text-xl font-extrabold text-[#D4AF37]">Em breve!</p>
-                <p className="text-sm text-slate/50 leading-relaxed">
+                <p className="text-sm text-slate/70 leading-relaxed">
                   Estamos preparando nosso catálogo de materiais para aluguel.
                   Em breve você poderá alugar mesas, cadeiras, toalhas e muito mais.
                 </p>
               </div>
             ) : (
               <div>
-                <p className="text-xs font-bold text-slate/40 uppercase tracking-widest mb-4">
+                <p className="text-xs font-bold text-slate/70 uppercase tracking-widest mb-4">
                   Itens disponíveis para aluguel
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

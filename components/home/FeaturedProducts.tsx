@@ -23,7 +23,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <p className="text-sm font-bold text-[#D4AF37] uppercase tracking-widest mb-2">
+          <p className="text-sm font-bold text-gold-deep uppercase tracking-widest mb-2">
             Destaques
           </p>
           <h2 className="text-3xl md:text-4xl font-extrabold text-[#1E293B]">

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { FloatingWhatsAppButton } from '@/components/shared/FloatingWhatsAppButton'
 import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
@@ -70,7 +69,6 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-white antialiased" style={{ fontFamily: "'Nunito', sans-serif" }}>
         {children}
-        <FloatingWhatsAppButton />
         <Toaster />
       </body>
     </html>

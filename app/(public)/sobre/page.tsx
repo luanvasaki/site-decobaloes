@@ -37,7 +37,7 @@ export default function SobrePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F9A8D4]/20 text-sm font-semibold text-[#D4AF37] mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F9A8D4]/20 text-sm font-semibold text-gold-deep mb-6">
               <Sparkles className="w-4 h-4" />
               Nossa história
             </div>
@@ -77,22 +77,22 @@ export default function SobrePage() {
                     <Heart className="w-11 h-11 text-[#D4AF37]" />
                   </div>
                   <p className="text-2xl font-extrabold text-[#1E293B] mb-1">Miriam Vasaki</p>
-                  <p className="text-sm text-slate/50 font-medium mb-6">Fundadora &amp; Decoradora</p>
+                  <p className="text-sm text-slate/70 font-medium mb-6">Fundadora &amp; Decoradora</p>
 
                   <div className="flex gap-6 justify-center">
                     <div className="text-center">
                       <p className="text-xl font-extrabold text-[#D4AF37]">25+</p>
-                      <p className="text-xs text-slate/40 font-medium mt-0.5">Anos</p>
+                      <p className="text-xs text-slate/70 font-medium mt-0.5">Anos</p>
                     </div>
                     <div className="w-px bg-slate/10" />
                     <div className="text-center">
                       <p className="text-xl font-extrabold text-[#D4AF37]">13k+</p>
-                      <p className="text-xs text-slate/40 font-medium mt-0.5">Festas</p>
+                      <p className="text-xs text-slate/70 font-medium mt-0.5">Festas</p>
                     </div>
                     <div className="w-px bg-slate/10" />
                     <div className="text-center">
                       <p className="text-xl font-extrabold text-[#D4AF37]">500+</p>
-                      <p className="text-xs text-slate/40 font-medium mt-0.5">Itens</p>
+                      <p className="text-xs text-slate/70 font-medium mt-0.5">Itens</p>
                     </div>
                   </div>
                 </div>
@@ -173,7 +173,7 @@ export default function SobrePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-sm font-bold text-[#D4AF37] uppercase tracking-widest mb-3">
+            <p className="text-sm font-bold text-gold-deep uppercase tracking-widest mb-3">
               Vamos conversar?
             </p>
             <h2 className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-4">

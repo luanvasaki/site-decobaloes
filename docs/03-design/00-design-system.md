@@ -23,7 +23,7 @@ Consulte antes de escrever uma cor, tamanho ou espaçamento "no olho" em uma tel
 | Cor | Uso | Valor |
 |---|---|---|
 | **Primary (rosa)** | Cor "amigável" da marca — fundos suaves, estado ativo de navegação, anéis de foco | `#F9A8D4`, com escala de 50 (`#fdf2f8`, quase branco) até 500 (`#ec4899`, rosa mais saturado) |
-| **Gold (dourado)** | Acento "premium" — preços, estrelas de avaliação, borda da miniatura ativa na galeria, rótulos de destaque, metade "balões" da logo | `#D4AF37`, com variação clara `#E8C84A` e escura `#B8960F` |
+| **Gold (dourado)** | Acento "premium" — preços, estrelas de avaliação, borda da miniatura ativa na galeria, rótulos de destaque, metade "balões" da logo | `#D4AF37`, com variação clara `#E8C84A`, escura `#B8960F` e **`gold-deep` `#8A6D08`** (só para texto pequeno sobre fundo claro — ver regra de contraste abaixo) |
 | **Slate (grafite/azul-marinho)** | Texto principal, títulos, fundo de seções sérias (rodapé, menu do admin) — quase sempre usado com opacidade (`/70`, `/50`, `/40`...) em vez da escala de tons | `#1E293B` |
 | **WhatsApp (verde)** | Reservada exclusivamente para os botões de WhatsApp — nunca reaproveitada como "verde de sucesso" genérico | `#25D366`, com variações mais escuras para hover |
 
@@ -146,6 +146,10 @@ Pontos relevantes de acessibilidade ligados especificamente à aparência (cor, 
 
 - **Nenhuma informação depende só da cor**: os selos de status (evento e pagamento) sempre combinam cor com texto escrito ("Confirmado", "Pago") — quem não distingue bem as cores ainda consegue ler o estado pelo texto. Isso é uma boa prática já seguida de forma consistente no projeto.
 - **Texto principal usa grafite escuro (`#1E293B`), não preto puro** — uma escolha estética comum (suaviza o visual), mas que reduz ligeiramente o contraste em relação a um preto absoluto. Não foi medido formalmente neste projeto se todas as combinações de texto sobre fundo atingem os níveis recomendados de contraste (WCAG AA) — é uma verificação recomendada, especialmente em textos usados com opacidade reduzida (`/70`, `/50`, `/40`), que ficam ainda mais claros e podem se aproximar do limite de legibilidade sobre fundo branco.
+- **Regra de contraste para texto (decisão de 2026-10-08, auditoria `../07-audits/04-auditoria-ux-visual.md`, achado 4)**: medições mostraram que o rosa `#F9A8D4` (1,8:1), o dourado `#D4AF37` (2,1:1) e o grafite abaixo de 70% de opacidade (`/50` = 3,0:1, `/40` = 2,4:1) não atingem o mínimo de 4,5:1 para texto pequeno sobre fundo branco. A partir daqui:
+  - **Texto pequeno dourado sobre fundo claro** (rótulos "eyebrow", "Foto em breve") usa `text-gold-deep` (`#8A6D08`, 4,9:1). O dourado `#D4AF37` continua em ícones, na logo, em bordas/destaques e em texto sobre o fundo escuro do rodapé (onde o contraste é alto).
+  - **Rosa claro `#F9A8D4` nunca é cor de texto** sobre fundo claro — só fundo, borda, anel de foco e ícone. Links de contato usam grafite em negrito, com hover em `primary-500`.
+  - **Grafite com opacidade em texto**: mínimo `/70` (5,3:1). Opacidades menores ficam restritas a ícones decorativos e estados vazios.
 - **Anel de foco rosa claro** (`#F9A8D4` a 40% de opacidade) é o indicador visual de foco em campos de formulário e botões — visível sobre fundo branco/claro, mas não foi verificado sobre todos os fundos possíveis do site (ex. seções com fundo colorido).
 - **Texto sobre fotos** (cartões de serviço da Home) sempre usa uma camada escura em gradiente por trás do texto branco, especificamente para garantir legibilidade sobre uma imagem de fundo variável — um cuidado de contraste já aplicado corretamente.
 - **Tamanho mínimo de texto**: o tamanho de fonte mais pequeno usado no projeto ainda é legível em tela, mas é usado com frequência (rótulos, texto de tabela no admin) — vale atenção redobrada a não reduzir ainda mais esse tamanho em telas novas.

@@ -15,7 +15,7 @@ export default function ContatoPage() {
       {/* Header */}
       <div className="bg-gradient-to-b from-[#fdf2f8] to-white py-16">
         <div className="container mx-auto px-4 max-w-4xl text-center">
-          <p className="text-sm font-bold text-[#D4AF37] uppercase tracking-widest mb-2">
+          <p className="text-sm font-bold text-gold-deep uppercase tracking-widest mb-2">
             Contato
           </p>
           <h1 className="text-3xl md:text-4xl font-extrabold text-[#1E293B] mb-4">
@@ -59,7 +59,7 @@ export default function ContatoPage() {
                     href={getWhatsAppLink()}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-[#F9A8D4] hover:text-pink-400 transition-colors mt-0.5 block"
+                    className="text-sm font-semibold text-slate hover:text-primary-500 transition-colors mt-0.5 block"
                   >
                     (15) 9 9620-4192
                   </a>
@@ -86,7 +86,7 @@ export default function ContatoPage() {
                   <p className="font-semibold text-slate text-sm">E-mail</p>
                   <a
                     href="mailto:miriamvasaki@gmail.com"
-                    className="text-sm text-[#F9A8D4] hover:text-pink-400 transition-colors mt-0.5 block"
+                    className="text-sm font-semibold text-slate hover:text-primary-500 transition-colors mt-0.5 block"
                   >
                     miriamvasaki@gmail.com
                   </a>
@@ -103,7 +103,7 @@ export default function ContatoPage() {
                     href="https://instagram.com/miriam_vasaki"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-[#F9A8D4] hover:text-pink-400 transition-colors mt-0.5 block"
+                    className="text-sm font-semibold text-slate hover:text-primary-500 transition-colors mt-0.5 block"
                   >
                     @miriam_vasaki
                   </a>
