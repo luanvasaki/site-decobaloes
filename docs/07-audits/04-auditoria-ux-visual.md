@@ -92,10 +92,14 @@ Quem não está logado já vê a barra lateral completa (Dashboard, Eventos, Pro
 
 **Recomendação** (`frontend-manager`): na rota `/admin/login`, esconder a `AdminSidebar` (tela de login em tela cheia) e não renderizar o botão de WhatsApp em nenhuma rota `/admin`.
 
+**Status (2026-10-08)**: resolvido — `AdminSidebar`, `AdminMobileNav` e o novo `AdminMobileHeader` não aparecem em `/admin/login` (tela de login em tela cheia); o botão de WhatsApp já não aparecia no admin desde o achado 3.
+
 ### 9. Botão flutuante de WhatsApp cobre conteúdo no celular
 No celular ele cai em cima do texto do Hero ("…festas especiais…"), da foto do 2º card do Catálogo e do quadro "Paleta de cores" no Produto. Nas páginas de produto ele também repete o botão grande "Alugar via WhatsApp" que já está na tela.
 
 **Recomendação** (`frontend-manager`): reservar espaço inferior no celular (`padding-bottom` no `main`) ou esconder o botão flutuante quando outro botão de WhatsApp estiver visível.
+
+**Status (2026-10-08)**: resolvido — o botão flutuante some (animação de escala) enquanto um botão grande de WhatsApp da página (`WhatsAppButton`, marcado com `data-whatsapp-cta`) está na tela ou logo abaixo da dobra (margem de 25%), e volta quando não há nenhum. No celular ficou um pouco menor (48px) e mais perto do canto.
 
 ### 10. Página de produto termina num beco sem saída
 Depois do botão "Alugar via WhatsApp" a página acaba em espaço branco. A descrição costuma repetir o próprio nome ("Decoração casamento" → descrição "Decoração casamento"), e decorações mostram "1 unidade disponível", que soa estranho para um serviço montado sob medida.
@@ -111,6 +115,8 @@ Depois do botão "Alugar via WhatsApp" a página acaba em espaço branco. A desc
 As abas de tema ficam cortadas na lateral ("Chá Revelação" some) sem nenhuma indicação de que dá para rolar; as abas Decorações/Materiais ficam empilhadas com larguras diferentes. No desktop, o cabeçalho rosa é uma faixa grande só com título. O selo "Casamento" em cada card repete a aba já selecionada.
 
 **Recomendação** (`frontend-manager`): degradê na borda indicando rolagem (ou quebra em 2 linhas) e abas Decorações/Materiais lado a lado no celular; `design-manager` — subtítulo curto ou mini-colagem de fotos no cabeçalho; esconder o selo de categoria quando já há um tema filtrado.
+
+**Status (2026-10-08)**: parte de `frontend-manager` resolvida — abas Decorações/Materiais lado a lado no celular (rótulo curto "Materiais"), abas de tema sem quebrar texto e com degradê na borda direita indicando rolagem. Cabeçalho do Catálogo e selo de categoria repetido continuam em aberto.
 
 ---
 

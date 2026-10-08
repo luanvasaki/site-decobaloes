@@ -41,26 +41,28 @@ export function CatalogView({ products, galleryPhotos, initialTheme }: CatalogVi
   return (
     <div>
       {/* Main tabs */}
-      <div className="flex gap-3 mb-8 flex-wrap">
+      <div className="grid grid-cols-2 gap-2 mb-8 sm:flex sm:gap-3">
         <button
           onClick={() => setMainTab('decoracao')}
-          className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40 ${
+          className={`flex items-center justify-center gap-2 px-3 sm:px-6 py-3 rounded-2xl font-bold text-sm transition-all focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40 ${
             mainTab === 'decoracao'
               ? 'bg-[#F9A8D4] text-[#1E293B] shadow-sm'
-              : 'bg-white border border-slate/10 text-slate/60 hover:border-[#F9A8D4]'
+              : 'bg-white border border-slate/10 text-slate/70 hover:border-[#F9A8D4]'
           }`}
         >
           🎉 Decorações
         </button>
         <button
           onClick={() => setMainTab('material')}
-          className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all focus:outline-none focus:ring-4 focus:ring-[#D4AF37]/40 ${
+          className={`flex items-center justify-center gap-2 px-3 sm:px-6 py-3 rounded-2xl font-bold text-sm transition-all focus:outline-none focus:ring-4 focus:ring-[#D4AF37]/40 ${
             mainTab === 'material'
               ? 'bg-[#D4AF37] text-white shadow-sm'
-              : 'bg-white border border-slate/10 text-slate/60 hover:border-[#D4AF37]'
+              : 'bg-white border border-slate/10 text-slate/70 hover:border-[#D4AF37]'
           }`}
         >
-          <Hammer className="w-4 h-4" /> Aluguel de Materiais
+          <Hammer className="w-4 h-4" />
+          <span className="sm:hidden">Materiais</span>
+          <span className="hidden sm:inline">Aluguel de Materiais</span>
         </button>
       </div>
 
@@ -75,28 +77,31 @@ export function CatalogView({ products, galleryPhotos, initialTheme }: CatalogVi
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.3 }}
           >
-            {/* Theme tabs */}
-            <div className="flex gap-2 mb-8 overflow-x-auto pb-1 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap scrollbar-hide">
-              {GALLERY_CATEGORIES.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveTheme(cat.id)}
-                  className={`relative px-5 py-2 rounded-2xl text-sm font-bold transition-colors focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40 ${
-                    activeTheme === cat.id
-                      ? 'text-white'
-                      : 'bg-white border border-slate/10 text-slate/60 hover:border-slate/30 hover:text-slate'
-                  }`}
-                >
-                  {activeTheme === cat.id && (
-                    <motion.span
-                      layoutId="theme-tab-pill"
-                      className="absolute inset-0 bg-[#1E293B] rounded-2xl"
-                      transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-                    />
-                  )}
-                  <span className="relative">{cat.label}</span>
-                </button>
-              ))}
+            {/* Abas de tema — no celular rolam na horizontal; o degradê na borda direita indica que há mais */}
+            <div className="relative mb-8 -mx-4 md:mx-0">
+              <div className="flex gap-2 overflow-x-auto pb-1 pl-4 pr-10 md:px-0 md:flex-wrap scrollbar-hide">
+                {GALLERY_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveTheme(cat.id)}
+                    className={`relative shrink-0 whitespace-nowrap px-5 py-2 rounded-2xl text-sm font-bold transition-colors focus:outline-none focus:ring-4 focus:ring-[#F9A8D4]/40 ${
+                      activeTheme === cat.id
+                        ? 'text-white'
+                        : 'bg-white border border-slate/10 text-slate/70 hover:border-slate/30 hover:text-slate'
+                    }`}
+                  >
+                    {activeTheme === cat.id && (
+                      <motion.span
+                        layoutId="theme-tab-pill"
+                        className="absolute inset-0 bg-[#1E293B] rounded-2xl"
+                        transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                      />
+                    )}
+                    <span className="relative">{cat.label}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="md:hidden pointer-events-none absolute right-0 top-0 bottom-1 w-10 bg-gradient-to-l from-white to-transparent" />
             </div>
 
             {/* Fotos reais deste tema — abre lightbox na própria página, sem navegar */}

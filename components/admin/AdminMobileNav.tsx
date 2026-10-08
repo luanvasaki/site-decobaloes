@@ -25,6 +25,9 @@ export function AdminMobileNav() {
     router.refresh()
   }
 
+  // A tela de login fica em tela cheia, sem o menu de quem já está logado
+  if (pathname === '/admin/login') return null
+
   return (
     <nav
       className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate/10"

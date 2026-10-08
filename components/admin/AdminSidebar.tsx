@@ -34,6 +34,9 @@ export function AdminSidebar() {
     router.refresh()
   }
 
+  // A tela de login fica em tela cheia, sem o menu de quem já está logado
+  if (pathname === '/admin/login') return null
+
   return (
     <aside className="hidden md:flex w-64 shrink-0 bg-[#1E293B] min-h-screen flex-col">
       {/* Logo */}

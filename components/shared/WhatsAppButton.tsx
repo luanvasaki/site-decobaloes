@@ -30,6 +30,7 @@ export function WhatsAppButton({
   return (
     <motion.a
       href={getWhatsAppLink(productName)}
+      data-whatsapp-cta
       target="_blank"
       rel="noopener noreferrer"
       whileHover={{ scale: 1.03 }}
