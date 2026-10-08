@@ -21,8 +21,8 @@ export function CallToAction() {
         >
           <span className="text-4xl mb-6 block">🎉</span>
           <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
-            Pronta para planejar
-            <span className="block text-[#F9A8D4]">sua festa dos sonhos?</span>
+            Vamos planejar
+            <span className="block text-[#F9A8D4]">a sua festa dos sonhos?</span>
           </h2>
           <p className="text-slate-400 text-lg mb-10 max-w-xl mx-auto">
             Entre em contato agora e descubra como podemos transformar o seu

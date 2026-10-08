@@ -179,8 +179,8 @@ export default function SobrePage() {
             <h2 className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-4">
               Sua próxima festa começa aqui
             </h2>
-            <p className="text-slate/60 mb-8 leading-relaxed">
-              Conte-nos sobre o seu evento e vamos criar juntas uma decoração
+            <p className="text-slate/70 mb-8 leading-relaxed">
+              Conte-nos sobre o seu evento e vamos criar, lado a lado, uma decoração
               que vai encantar a todos.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

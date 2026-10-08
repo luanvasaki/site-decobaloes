@@ -21,9 +21,9 @@ export default function ContatoPage() {
           <h1 className="text-3xl md:text-4xl font-extrabold text-[#1E293B] mb-4">
             Fale com a gente
           </h1>
-          <p className="text-slate/60 max-w-md mx-auto">
-            Pronta para fazer sua festa dos sonhos? Entre em contato e vamos
-            criar algo especial juntas.
+          <p className="text-slate/70 max-w-md mx-auto">
+            Vamos tirar a sua festa dos sonhos do papel? Entre em contato e
+            criamos algo especial para você.
           </p>
         </div>
       </div>

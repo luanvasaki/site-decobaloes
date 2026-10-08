@@ -106,6 +106,8 @@ Depois do botão "Alugar via WhatsApp" a página acaba em espaço branco. A desc
 
 **Recomendação**: `frontend-manager` — bloco "Outras decorações deste tema" (3–4 cards) e link "Ver fotos reais deste tema" para a Galeria; `content-specialist` — descrições de verdade (o que inclui, para quantas pessoas, estilo); `business-manager` — decidir se "unidades disponíveis" deve aparecer para decorações (faz sentido para materiais).
 
+**Status (2026-10-08)**: parte de `frontend-manager` resolvida — bloco "Outras decorações deste tema" (até 4 itens disponíveis do mesmo tema; para materiais, "Outros materiais para alugar") com link "Ver todas", e link "Ver fotos reais de festas deste tema" para a Galeria abaixo do botão de WhatsApp. Descrições reais (`content-specialist`) e "unidades disponíveis" em decorações (`business-manager`) continuam em aberto.
+
 ### 11. Hero repete os mesmos números três vezes
 "+25 anos" e "+13.000 festas" aparecem como selos sobre a foto **e** de novo na linha de estatísticas ao lado. "98% satisfação" não tem fonte visível.
 
@@ -132,6 +134,8 @@ As fotos dos cards "Para cada ocasião" e as primeiras do carrossel "Nossas deco
 
 **Recomendação** (`content-specialist`): versões neutras ("Vamos planejar a sua festa dos sonhos?", "vamos criar juntos/em conjunto").
 
+**Status (2026-10-08)**: resolvido — Home ("Vamos planejar a sua festa dos sonhos?"), Contato ("Vamos tirar a sua festa dos sonhos do papel? Entre em contato e criamos algo especial para você.") e Sobre ("vamos criar, lado a lado, uma decoração…").
+
 ### 15. Domínio novo, e-mail ainda é Gmail
 Com `decobaloes.com.br` no ar, `miriamvasaki@gmail.com` no Contato e no rodapé destoa da imagem "boutique".
 
@@ -141,6 +145,10 @@ Com `decobaloes.com.br` no ar, `miriamvasaki@gmail.com` no Contato e no rodapé 
 A 404 é só balão + mensagem + botão no meio de uma tela branca, sem logo nem menu.
 
 **Recomendação** (`frontend-manager`): mover `not-found.tsx` para dentro do layout público (com Navbar/Footer) e oferecer atalhos (Catálogo, Galeria).
+
+**Status (2026-10-08)**: resolvido — conteúdo comum em `components/shared/NotFoundMessage.tsx` (atalhos Catálogo, Galeria, Início); `app/not-found.tsx` (endereços inexistentes) monta Navbar/Footer/WhatsApp; `app/(public)/not-found.tsx` cobre `notFound()` do site público; novo `app/admin/not-found.tsx` utilitário, para um registro inexistente no admin não cair na 404 com o menu do site público.
+
+**Observação para `seo-manager`** (pré-existente, não causada por esta mudança): `/produto/<slug-inexistente>` responde HTTP 200 em vez de 404 — o `loading.tsx` do layout público faz a resposta começar por streaming antes de `notFound()` ser chamado. O Next já injeta `<meta name="robots" content="noindex">`, então não é indexada, mas é um "soft 404".
 
 ### 17. Botão do WhatsApp com texto branco sobre verde claro
 Branco sobre `#25D366` dá 2,0:1. É a cor oficial do WhatsApp e o botão é grande/negrito, então o impacto é menor — mas é o botão mais importante do site.
@@ -159,7 +167,7 @@ Branco sobre `#25D366` dá 2,0:1. É a cor oficial do WhatsApp e o botão é gra
 
 ## Ordem sugerida (sugestão — a decisão é de quem recebe o relatório)
 
-1. **Rápidos e de alto efeito**: 1 (feito), 4 (contraste — feito), 5 (texto do card — feito), 14 (feminino).
+1. **Rápidos e de alto efeito**: 1, 4, 5 e 14 — feitos.
 2. **Antes de publicar a Home nova**: 2 (depoimentos reais) e 3 (botão duplicado).
 3. **Rodada de design**: 7, 10, 11, 12.
 4. **Depende de material da empresa**: 6 (fotos da Miriam e de bastidores), 13 (curadoria de fotos), 15 (e-mail).

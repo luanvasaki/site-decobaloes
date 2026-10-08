@@ -2,11 +2,12 @@ export const dynamic = 'force-dynamic'
 
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getProductBySlug, getAllProductSlugs } from '@/services/products'
+import { getProductBySlug, getAllProductSlugs, getProducts } from '@/services/products'
 import { ProductGallery } from '@/components/products/ProductGallery'
 import { WhatsAppButton } from '@/components/shared/WhatsAppButton'
+import { ProductCard } from '@/components/products/ProductCard'
 import { formatCurrency } from '@/lib/utils'
-import { Package, Ruler, CircleDollarSign, CheckCircle2, XCircle, Palette, Users, ChevronLeft } from 'lucide-react'
+import { Package, Ruler, CircleDollarSign, CheckCircle2, XCircle, Palette, Users, ChevronLeft, ArrowRight, Images } from 'lucide-react'
 import Link from 'next/link'
 import { CATEGORY_TO_THEME } from '@/lib/category-mapping'
 
@@ -64,6 +65,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound()
 
   const hasDimensions = product.height || product.width || product.depth
+  const theme = product.categories?.slug ? CATEGORY_TO_THEME[product.categories.slug] : undefined
+
+  // Outros itens para o visitante não terminar a página num beco sem saída:
+  // decorações do mesmo tema, ou outros materiais para alugar
+  const related = (await getProducts({ availableOnly: true }))
+    .filter((p) => p.id !== product.id && p.product_type === product.product_type)
+    .filter((p) =>
+      product.product_type === 'decoracao'
+        ? theme !== undefined && p.categories?.slug !== undefined && CATEGORY_TO_THEME[p.categories.slug] === theme
+        : true
+    )
+    .slice(0, 4)
 
   return (
     <div className="min-h-screen pt-20 pb-16">
@@ -71,7 +84,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* Breadcrumb */}
         <Link
           href="/catalogo"
-          className="inline-flex items-center gap-1 text-sm text-slate/60 hover:text-slate mb-8 transition-colors"
+          className="inline-flex items-center gap-1 text-sm text-slate/70 hover:text-slate mb-8 transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
           Voltar ao catálogo
@@ -207,7 +220,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             )}
 
             {/* Quantity info */}
-            <div className="flex items-center gap-2 mb-8 text-sm text-slate/60">
+            <div className="flex items-center gap-2 mb-8 text-sm text-slate/70">
               <Package className="w-4 h-4" />
               <span>
                 {product.quantity_available} unidade
@@ -222,8 +235,52 @@ export default async function ProductPage({ params }: ProductPageProps) {
               size="lg"
               className="w-full justify-center"
             />
+
+            {/* Fotos reais do mesmo tema na Galeria */}
+            {product.product_type === 'decoracao' && theme && (
+              <Link
+                href={`/galeria?tema=${theme}`}
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 text-sm font-bold text-slate hover:text-primary-500 transition-colors"
+              >
+                <Images className="w-4 h-4 text-[#D4AF37]" />
+                Ver fotos reais de festas deste tema
+              </Link>
+            )}
           </div>
         </div>
+
+        {/* Outras opções */}
+        {related.length > 0 && (
+          <section className="mt-20">
+            <div className="flex items-end justify-between gap-4 mb-6">
+              <div>
+                <p className="text-xs font-bold text-gold-deep uppercase tracking-widest mb-2">
+                  Continue explorando
+                </p>
+                <h2 className="text-2xl font-extrabold text-[#1E293B]">
+                  {product.product_type === 'decoracao' ? 'Outras decorações deste tema' : 'Outros materiais para alugar'}
+                </h2>
+              </div>
+              <Link
+                href={product.product_type === 'decoracao' && theme ? `/catalogo?tema=${theme}` : '/catalogo'}
+                className="hidden sm:inline-flex items-center gap-1.5 shrink-0 text-sm font-bold text-slate hover:text-primary-500 transition-colors"
+              >
+                Ver todas <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
+              {related.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+            <Link
+              href={product.product_type === 'decoracao' && theme ? `/catalogo?tema=${theme}` : '/catalogo'}
+              className="sm:hidden mt-8 flex items-center justify-center gap-1.5 text-sm font-bold text-slate hover:text-primary-500 transition-colors"
+            >
+              Ver todas <ArrowRight className="w-4 h-4" />
+            </Link>
+          </section>
+        )}
       </div>
     </div>
   )
