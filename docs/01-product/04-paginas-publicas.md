@@ -131,6 +131,8 @@ As abas de tema rolam horizontalmente em telas pequenas. A grade de produtos vai
 
 **Atualização (2026-07-23)**: a página saiu do Navbar/Footer (não é mais um destino de navegação principal) depois de uma rodada de discussão entre as Skills de domínio — o Catálogo passou a mostrar uma faixa de fotos reais embutida (com lightbox in-place), cobrindo a mesma necessidade sem exigir sair da página. A rota `/galeria` continua existindo e acessível (sem redirect, sem 404) — só não tem mais link no menu; o único caminho interno restante é o "Ver todas" ao final da faixa de fotos do Catálogo (só aparece quando o tema ativo já tem fotos reais).
 
+**Atualização (2026-10-08)**: a Galeria **voltou ao Navbar e ao Footer** (entre Catálogo e Sobre), por decisão do usuário após a auditoria de UX/visual (`../07-audits/04-auditoria-ux-visual.md`, achado 1). Os 4 temas já têm fotos reais (41 no total), e a página passou a ser a vitrine mais forte do trabalho da empresa — a faixa compacta no Catálogo continua existindo, como atalho dentro do contexto de cada tema.
+
 ### Objetivo
 Deixar o cliente navegar por fotos reais de festas já decoradas, organizadas por tema, para se inspirar e decidir o estilo antes de entrar em contato — sem misturar com o catálogo de produtos alugáveis.
 

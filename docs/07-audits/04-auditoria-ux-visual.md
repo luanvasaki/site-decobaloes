@@ -34,12 +34,14 @@ Durante a auditoria, o repositório local tinha alterações **não commitadas**
 
 **Recomendação**: decisão do humano (`design-manager` + `seo-manager` opinam) — devolver ou não "Galeria" ao menu e ao rodapé. Independente disso (`frontend-manager`): ligar os cards "Para cada ocasião" da Home ao Catálogo **já filtrado pelo tema** (hoje os 4 cards levam para `/catalogo` genérico).
 
-**Status (2026-10-08)**: parte dos cards resolvida — cada card leva a `/catalogo?tema=...`. O 4º card também teve o título padrão e a descrição corrigidos para Chá Revelação (resolve o achado 5). Volta da Galeria ao menu: aguardando decisão.
+**Status (2026-10-08)**: parte dos cards resolvida — cada card leva a `/catalogo?tema=...`. O 4º card também teve o título padrão e a descrição corrigidos para Chá Revelação (resolve o achado 5). Volta da Galeria ao menu: decidida pelo usuário em 2026-10-08 e aplicada (Navbar e Footer).
 
 ### 2. (Trabalho em andamento) Depoimentos com nomes e textos inventados
 `components/home/TestimonialsSection.tsx` (não commitado) traz depoimentos com nomes de clientes ("Mariana Silveira", "Camila & Lucas", "Renata Albuquerque") e frases que não vêm de clientes reais. Publicar depoimentos fictícios como se fossem reais é propaganda enganosa (Código de Defesa do Consumidor, art. 37) e, se descoberto, destrói justamente a confiança que a seção quer criar.
 
 **Recomendação** (`content-specialist`): só publicar a seção com depoimentos reais, autorizados pelos clientes — por exemplo, prints/avaliações do Google ou do Instagram, com primeiro nome e tipo de festa. Sem depoimentos reais, não publicar a seção.
+
+**Status (2026-10-08)**: por decisão do usuário, a seção foi retirada da Home em andamento (`app/(public)/page.tsx`). O componente `TestimonialsSection.tsx` ficou na pasta, sem uso, para ser reaproveitado quando houver depoimentos reais — trocar o conteúdo antes de reativar.
 
 ### 3. (Trabalho em andamento) Botão flutuante de WhatsApp duplicado
 O botão flutuante já é renderizado em `app/layout.tsx` (vale para o site inteiro). A alteração local em `app/(public)/layout.tsx` adiciona um **segundo** `<FloatingWhatsAppButton />` — ao publicar, as páginas públicas mostrariam dois botões sobrepostos.
@@ -151,7 +153,7 @@ Branco sobre `#25D366` dá 2,0:1. É a cor oficial do WhatsApp e o botão é gra
 
 ## Ordem sugerida (sugestão — a decisão é de quem recebe o relatório)
 
-1. **Rápidos e de alto efeito**: 1 (cards por tema — feito; Galeria no menu — aguarda decisão), 4 (contraste — feito), 5 (texto do card — feito), 14 (feminino).
+1. **Rápidos e de alto efeito**: 1 (feito), 4 (contraste — feito), 5 (texto do card — feito), 14 (feminino).
 2. **Antes de publicar a Home nova**: 2 (depoimentos reais) e 3 (botão duplicado).
 3. **Rodada de design**: 7, 10, 11, 12.
 4. **Depende de material da empresa**: 6 (fotos da Miriam e de bastidores), 13 (curadoria de fotos), 15 (e-mail).
